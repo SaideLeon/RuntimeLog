@@ -1,99 +1,99 @@
 # Runtime::Log ⚡️
 
-> **System Status:** Online  
-> **Theme:** Cyberpunk / Dev-focused  
+> **Status do Sistema:** Online  
+> **Tema:** Cyberpunk / Focado em Desenvolvedores  
 > **Stack:** React + Supabase + Google Gemini AI
 
-**Runtime::Log** is a high-performance blogging platform designed specifically for software engineers. It features a terminal-inspired aesthetic, deep technical content rendering, and AI-powered features for content generation and search insights.
+**Runtime::Log** é uma plataforma de blog de alto desempenho projetada especificamente para engenheiros de software. Apresenta uma estética inspirada em terminais, renderização de conteúdo técnico aprofundado e recursos impulsionados por IA para geração de conteúdo e insights de pesquisa.
 
-![Project Preview](https://placehold.co/800x400/050505/10b981?text=Runtime::Log+Preview)
+![Prévia do Projeto](https://placehold.co/800x400/050505/10b981?text=Runtime::Log+Preview)
 
-## 🚀 Features
+## 🚀 Recursos
 
 ### 🎨 UX/UI
-- **Neon/Dark Mode Aesthetic:** Built with Tailwind CSS, featuring glassmorphism, glowing borders, and terminal-style typography (`JetBrains Mono`).
-- **Responsive Design:** Fully optimized for mobile, tablet, and desktop.
-- **Animations:** Smooth transitions using `framer-motion`.
+- **Estética Neon/Modo Escuro:** Construído com Tailwind CSS, apresentando glassmorphism, bordas brilhantes e tipografia estilo terminal (`JetBrains Mono`).
+- **Design Responsivo:** Totalmente otimizado para mobile, tablet e desktop.
+- **Animações:** Transições suaves usando `framer-motion`.
 
-### 📝 Content Management
-- **Markdown Support:** Renders rich text, code blocks with syntax highlighting (`react-syntax-highlighter`), and recursive styling.
-- **Admin Dashboard:** 
-  - Drag-and-drop `.md` file upload.
-  - Automatic YAML frontmatter parsing.
-  - **AI Generator:** Draft full blog posts using Google Gemini 3 models directly from the admin panel.
+### 📝 Gerenciamento de Conteúdo
+- **Suporte a Markdown:** Renderiza texto rico, blocos de código com destaque de sintaxe (`react-syntax-highlighter`) e estilização recursiva.
+- **Painel Administrativo:** 
+  - Upload de arquivos `.md` via arrastar e soltar.
+  - Análise automática de frontmatter YAML.
+  - **Gerador de IA:** Rascunhe posts completos de blog usando modelos Google Gemini 3 diretamente do painel de administração.
 
-### 🤖 AI Integration (Google Gemini)
-- **AI Search Insights:** Generates "Did you know?" style technical insights based on user search queries.
-- **Content Generation:** Auto-generate articles or fill in missing content for drafts.
+### 🤖 Integração com IA (Google Gemini)
+- **Insights de Pesquisa com IA:** Gera insights técnicos no estilo "Você sabia?" baseados nas consultas de pesquisa do usuário.
+- **Geração de Conteúdo:** Gera artigos automaticamente ou preenche conteúdo ausente em rascunhos.
 
-### 👥 Community
-- **Authentication:** Email/Password authentication via Supabase.
-- **Comments:** Nested threading (Reddit-style) for technical discussions.
-- **Likes:** Real-time engagement tracking.
+### 👥 Comunidade
+- **Autenticação:** Autenticação por Email/Senha via Supabase.
+- **Comentários:** Threads aninhadas (estilo Reddit) para discussões técnicas.
+- **Curtidas:** Rastreamento de engajamento em tempo real.
 
 ## 🛠 Tech Stack
 
 - **Frontend:** React 19, TypeScript, Tailwind CSS
-- **State/Effects:** React Hooks
+- **Estado/Efeitos:** React Hooks
 - **Backend/DB:** Supabase (PostgreSQL, Auth, Realtime)
-- **AI:** Google GenAI SDK (`@google/genai`)
-- **Icons:** Lucide React
+- **IA:** Google GenAI SDK (`@google/genai`)
+- **Ícones:** Lucide React
 
-## ⚙️ Installation & Setup
+## ⚙️ Instalação e Configuração
 
-### 1. Clone the repository
+### 1. Clone o repositório
 ```bash
-git clone https://github.com/your-username/runtime-log.git
+git clone https://github.com/seu-usuario/runtime-log.git
 cd runtime-log
 ```
 
-### 2. Install dependencies
+### 2. Instale as dependências
 ```bash
 npm install
 ```
 
-### 3. Environment Variables
-Create a `.env` file in the root directory (or configure your build environment) with the following:
+### 3. Variáveis de Ambiente
+Crie um arquivo `.env` no diretório raiz (ou configure seu ambiente de build) com o seguinte:
 
 ```env
-# Required for AI features
-API_KEY=your_google_gemini_api_key
+# Necessário para recursos de IA
+API_KEY=sua_chave_api_google_gemini
 ```
 
-*Note: Supabase configuration is currently located in `services/supabaseClient.ts`.*
+*Nota: A configuração do Supabase está atualmente localizada em `services/supabaseClient.ts`.*
 
-### 4. Database Setup (Supabase)
-Run the SQL script provided in `supabase_schema.sql` inside your Supabase project's SQL Editor. This will:
-1. Enable UUID extensions.
-2. Create tables: `profiles`, `posts`, `comments`, `post_likes`.
-3. Set up Row Level Security (RLS) policies.
-4. Create triggers for new user handling.
+### 4. Configuração do Banco de Dados (Supabase)
+Execute o script SQL fornecido em `supabase_schema.sql` dentro do Editor SQL do seu projeto Supabase. Isso irá:
+1. Habilitar extensões UUID.
+2. Criar tabelas: `profiles`, `posts`, `comments`, `post_likes`.
+3. Configurar políticas de Segurança em Nível de Linha (RLS).
+4. Criar gatilhos (triggers) para manipulação de novos usuários.
 
-### 5. Run the application
+### 5. Execute a aplicação
 ```bash
 npm start
 ```
 
-## 📂 Project Structure
+## 📂 Estrutura do Projeto
 
 ```text
 /
-├── components/       # UI Components (Hero, AdminView, ArticleView, etc.)
-├── services/         # API Clients (Supabase, Gemini)
-├── types.ts          # TypeScript Interfaces
-├── constants.ts      # Static data & config
-├── supabase_schema.sql # Database definition
-└── App.tsx           # Main Application Logic
+├── components/       # Componentes de UI (Hero, AdminView, ArticleView, etc.)
+├── services/         # Clientes de API (Supabase, Gemini)
+├── types.ts          # Interfaces TypeScript
+├── constants.ts      # Dados estáticos e configurações
+├── supabase_schema.sql # Definição do banco de dados
+└── App.tsx           # Lógica Principal da Aplicação
 ```
 
-## 🔐 Admin Access
+## 🔐 Acesso Administrativo
 
-To access the `/admin` route:
-1. Sign up a new user via the UI.
-2. Go to your Supabase Table Editor -> `profiles` table.
-3. Change the `role` column of your user from `user` to `admin`.
-4. Refresh the application.
+Para acessar a rota `/admin`:
+1. Registre um novo usuário via interface.
+2. Vá para o Editor de Tabelas do Supabase -> tabela `profiles`.
+3. Altere a coluna `role` do seu usuário de `user` para `admin`.
+4. Atualize a aplicação.
 
-## 📜 License
+## 📜 Licença
 
-MIT License.
+Licença MIT.
