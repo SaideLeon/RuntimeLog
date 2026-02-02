@@ -3,13 +3,15 @@ import { BlogPost } from '../types';
 import WindowFrame from './WindowFrame';
 import { ArrowLeft, Clock, Calendar, Hash, Sparkles, Copy, Check } from 'lucide-react';
 import { generateArticleContent } from '../services/geminiService';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface ArticleViewProps {
   post: BlogPost;
   onBack: () => void;
 }
 
-const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
+const CodeBlock: React.FC<{ code: string; language?: string }> = ({ code, language = 'text' }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -23,12 +25,15 @@ const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
   };
 
   return (
-    <div className="my-6 border border-emerald-500/20 rounded-lg overflow-hidden bg-[#050505]">
+    <div className="my-6 border border-emerald-500/20 rounded-lg overflow-hidden bg-[#1e1e1e]">
       <div className="flex items-center justify-between px-4 py-2 bg-[#0b0e11] border-b border-emerald-500/10">
-        <div className="flex gap-1.5">
-           <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/20"></div>
-           <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/20"></div>
-           <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/20"></div>
+        <div className="flex gap-2 items-center">
+           <div className="flex gap-1.5">
+             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/20"></div>
+             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/20"></div>
+             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/20"></div>
+           </div>
+           <span className="text-xs font-mono text-gray-500 uppercase ml-2">{language}</span>
         </div>
         <button 
           onClick={handleCopy}
@@ -39,10 +44,22 @@ const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
           {copied ? 'Copied' : 'Copy'}
         </button>
       </div>
-      <div className="p-4 overflow-x-auto custom-scrollbar">
-        <pre className="font-mono text-sm text-emerald-400 leading-relaxed">
+      <div className="overflow-x-auto custom-scrollbar">
+        <SyntaxHighlighter
+          language={language.toLowerCase()}
+          style={vscDarkPlus}
+          customStyle={{
+            margin: 0,
+            padding: '1.5rem',
+            background: 'transparent',
+            fontSize: '0.875rem',
+            lineHeight: '1.6',
+            fontFamily: "'JetBrains Mono', monospace",
+          }}
+          wrapLongLines={true}
+        >
           {code}
-        </pre>
+        </SyntaxHighlighter>
       </div>
     </div>
   );
@@ -70,6 +87,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, onBack }) => {
     const elements: React.ReactNode[] = [];
     let inCodeBlock = false;
     let codeBuffer: string[] = [];
+    let currentLanguage = 'text';
 
     lines.forEach((line, idx) => {
       // Check for code block markers
@@ -77,13 +95,20 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, onBack }) => {
         if (inCodeBlock) {
           // End of block
           elements.push(
-            <CodeBlock key={`code-${idx}`} code={codeBuffer.join('\n')} />
+            <CodeBlock key={`code-${idx}`} code={codeBuffer.join('\n')} language={currentLanguage} />
           );
           codeBuffer = [];
           inCodeBlock = false;
+          currentLanguage = 'text';
         } else {
           // Start of block
           inCodeBlock = true;
+          const match = line.trim().match(/```(\w+)?/);
+          if (match && match[1]) {
+            currentLanguage = match[1];
+          } else {
+            currentLanguage = 'text';
+          }
         }
       } else if (inCodeBlock) {
         codeBuffer.push(line);
@@ -106,7 +131,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, onBack }) => {
     // Handle any unclosed code blocks
     if (codeBuffer.length > 0) {
       elements.push(
-        <CodeBlock key="code-end" code={codeBuffer.join('\n')} />
+        <CodeBlock key="code-end" code={codeBuffer.join('\n')} language={currentLanguage} />
       );
     }
 
