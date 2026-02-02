@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 
 // Initialize Gemini
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
@@ -47,4 +47,55 @@ export const generateSearchInsights = async (query: string): Promise<string> => 
    } catch (e) {
      return "";
    }
+}
+
+export const generateFullPost = async (topic: string): Promise<any> => {
+  if (!process.env.API_KEY) throw new Error("API Key missing");
+
+  const prompt = `
+    You are a Senior Staff Engineer writing for a technical blog.
+    Generate a complete blog post metadata and content about: "${topic}".
+    The content should be deep, technical, include code snippets, and be formatted in valid Markdown.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING },
+            slug: { type: Type.STRING },
+            excerpt: { type: Type.STRING },
+            content: { type: Type.STRING },
+            category: { type: Type.STRING },
+            tags: { 
+              type: Type.ARRAY, 
+              items: { type: Type.STRING } 
+            },
+            read_time: { type: Type.STRING }
+          },
+          required: ["title", "slug", "excerpt", "content", "category", "tags", "read_time"]
+        }
+      }
+    });
+
+    let text = response.text || "{}";
+    
+    // Sanitize: remove any potential markdown code blocks wrapping the JSON if they exist
+    text = text.trim();
+    if (text.startsWith('```json')) {
+      text = text.replace(/^```json/, '').replace(/```$/, '');
+    } else if (text.startsWith('```')) {
+       text = text.replace(/^```/, '').replace(/```$/, '');
+    }
+    
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("Gemini Gen Error:", error);
+    throw error;
+  }
 }

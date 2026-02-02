@@ -17,6 +17,8 @@ export const INITIAL_POSTS: BlogPost[] = [
     readTime: '6 min read',
     date: '2023-10-24',
     tags: ['Best Practices', 'Refactoring', 'Architecture'],
+    slug: 'mito-codigo-limpo',
+    status: 'published',
     content: `
 # O Mito do "Código Limpo"
 
@@ -48,6 +50,8 @@ Código limpo não é sobre regras estáticas; é sobre clareza no contexto da e
     readTime: '12 min read',
     date: '2023-10-26',
     tags: ['React', 'Performance', 'Internals'],
+    slug: 'entendendo-react-fiber',
+    status: 'published',
   },
   {
     id: '3',
@@ -57,6 +61,8 @@ Código limpo não é sobre regras estáticas; é sobre clareza no contexto da e
     readTime: '8 min read',
     date: '2023-10-28',
     tags: ['K8s', 'Docker', 'Infrastructure'],
+    slug: 'kubernetes-para-devs',
+    status: 'published',
   },
   {
     id: '4',
@@ -66,6 +72,8 @@ Código limpo não é sobre regras estáticas; é sobre clareza no contexto da e
     readTime: '15 min read',
     date: '2023-10-30',
     tags: ['System Design', 'Scalability', 'Databases'],
+    slug: 'system-design-twitter-clone',
+    status: 'published',
   },
   {
     id: '5',
@@ -75,6 +83,8 @@ Código limpo não é sobre regras estáticas; é sobre clareza no contexto da e
     readTime: '10 min read',
     date: '2023-11-02',
     tags: ['Rust', 'Go', 'Microservices'],
+    slug: 'rust-vs-go-microservicos',
+    status: 'published',
   },
   {
     id: '6',
@@ -84,6 +94,8 @@ Código limpo não é sobre regras estáticas; é sobre clareza no contexto da e
     readTime: '5 min read',
     date: '2023-11-05',
     tags: ['Culture', 'Teamwork', 'Communication'],
+    slug: 'arte-code-review-empatico',
+    status: 'published',
   },
   {
     id: '7',
@@ -93,6 +105,8 @@ Código limpo não é sobre regras estáticas; é sobre clareza no contexto da e
     readTime: '14 min read',
     date: '2023-11-08',
     tags: ['AI', 'LLM', 'Python'],
+    slug: 'rag-langchain-chatbot',
+    status: 'published',
   },
   {
     id: '8',
@@ -102,6 +116,8 @@ Código limpo não é sobre regras estáticas; é sobre clareza no contexto da e
     readTime: '7 min read',
     date: '2023-11-10',
     tags: ['CSS', 'Design', 'Responsive'],
+    slug: 'css-moderno-container-queries',
+    status: 'published',
   },
   {
     id: '9',
@@ -111,6 +127,8 @@ Código limpo não é sobre regras estáticas; é sobre clareza no contexto da e
     readTime: '9 min read',
     date: '2023-11-12',
     tags: ['Observability', 'Tracing', 'Debugging'],
+    slug: 'monitoramento-vs-observabilidade',
+    status: 'published',
   },
   {
     id: '10',
@@ -120,5 +138,7 @@ Código limpo não é sobre regras estáticas; é sobre clareza no contexto da e
     readTime: '6 min read',
     date: '2023-11-15',
     tags: ['Career', 'Mental Health', 'Growth'],
+    slug: 'sindrome-do-impostor',
+    status: 'published',
   },
 ];
