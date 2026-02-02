@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BlogPost } from '../types';
 import WindowFrame from './WindowFrame';
-import { ArrowLeft, Clock, Calendar, Hash, Sparkles, Copy, Check } from 'lucide-react';
+import { ArrowLeft, Clock, Calendar, Hash, Sparkles, Copy, Check, Link as LinkIcon } from 'lucide-react';
 import { generateArticleContent } from '../services/geminiService';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -82,6 +82,17 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, onBack }) => {
     }
   }, [post, content]);
 
+  const generateId = (text: string) => {
+    return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+  };
+
+  const scrollToHeading = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const renderContent = (text: string) => {
     const lines = text.split('\n');
     const elements: React.ReactNode[] = [];
@@ -117,9 +128,37 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, onBack }) => {
         if (line.startsWith('# ')) {
           elements.push(<h1 key={idx} className="text-3xl font-bold text-emerald-400 mt-10 mb-6 border-b border-emerald-500/20 pb-2">{line.replace('# ', '')}</h1>);
         } else if (line.startsWith('## ')) {
-          elements.push(<h2 key={idx} className="text-2xl font-bold text-white mt-8 mb-4">{line.replace('## ', '')}</h2>);
+          const headingText = line.replace('## ', '');
+          const id = generateId(headingText);
+          elements.push(
+            <div key={idx} className="group flex items-center gap-3 mt-8 mb-4">
+              <h2 id={id} className="text-2xl font-bold text-white scroll-mt-4">{headingText}</h2>
+              <button
+                onClick={() => scrollToHeading(id)}
+                className="opacity-0 group-hover:opacity-100 transition-opacity text-emerald-500/40 hover:text-emerald-400 p-1 flex items-center justify-center"
+                aria-label={`Scroll to ${headingText}`}
+                title="Link to this section"
+              >
+                <LinkIcon size={18} />
+              </button>
+            </div>
+          );
         } else if (line.startsWith('### ')) {
-          elements.push(<h3 key={idx} className="text-xl font-bold text-white mt-6 mb-3">{line.replace('### ', '')}</h3>);
+          const headingText = line.replace('### ', '');
+          const id = generateId(headingText);
+          elements.push(
+            <div key={idx} className="group flex items-center gap-2 mt-6 mb-3">
+              <h3 id={id} className="text-xl font-bold text-white scroll-mt-4">{headingText}</h3>
+              <button
+                onClick={() => scrollToHeading(id)}
+                className="opacity-0 group-hover:opacity-100 transition-opacity text-emerald-500/40 hover:text-emerald-400 p-1 flex items-center justify-center"
+                aria-label={`Scroll to ${headingText}`}
+                title="Link to this section"
+              >
+                <LinkIcon size={16} />
+              </button>
+            </div>
+          );
         } else if (line.trim().startsWith('- ')) {
            elements.push(<li key={idx} className="ml-4 list-disc text-gray-300 mb-2 pl-2 marker:text-emerald-500">{line.replace('- ', '')}</li>);
         } else if (line.trim() !== '') {
