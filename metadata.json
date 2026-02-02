@@ -1,0 +1,5 @@
+{
+  "name": "Runtime::Log",
+  "description": "A high-performance, dark-mode blog for software engineers featuring neon aesthetics, deep-dive technical content, and AI-powered insights.",
+  "requestFramePermissions": []
+}
