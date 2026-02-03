@@ -47,10 +47,10 @@ const CodeBlock: React.FC<{ code: string; language?: string }> = ({ code, langua
         <button 
           onClick={handleCopy}
           className="flex items-center gap-1.5 text-xs font-mono text-gray-500 hover:text-emerald-400 transition-colors"
-          title="Copy to clipboard"
+          title="Copiar para área de transferência"
         >
           {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-          {copied ? 'Copied' : 'Copy'}
+          {copied ? 'Copiado' : 'Copiar'}
         </button>
       </div>
       <div className="overflow-x-auto custom-scrollbar">
@@ -226,7 +226,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, user, onAuthRequest, on
             const combinedText = paragraphBuffer.join(' ').trim();
             if (combinedText) {
                 elements.push(
-                    <p key={`p-${elements.length}`} className={`mb-6 text-gray-700 dark:text-gray-300 ${currentLineHeightClass} ${currentFontSizeClass} font-light tracking-wide`}>
+                    <p key={`p-${elements.length}`} className={`mb-6 text-gray-700 dark:text-gray-300 ${currentLineHeightClass} ${currentFontSizeClass} tracking-normal`}>
                         {parseInline(combinedText)}
                     </p>
                 );
@@ -238,6 +238,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, user, onAuthRequest, on
     lines.forEach((line, idx) => {
         const trimmed = line.trim();
         
+        // CODE BLOCKS
         if (trimmed.startsWith('```')) {
             if (inCodeBlock) {
                 elements.push(<CodeBlock key={`code-${idx}`} code={codeBuffer.join('\n')} language={language} />);
@@ -257,6 +258,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, user, onAuthRequest, on
             return;
         }
 
+        // H1
         if (line.startsWith('# ')) {
             flushParagraph();
             elements.push(
@@ -266,6 +268,8 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, user, onAuthRequest, on
             );
             return;
         }
+        
+        // H2
         if (line.startsWith('## ')) {
             flushParagraph();
             const text = line.replace('## ', '');
@@ -273,267 +277,219 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, user, onAuthRequest, on
             elements.push(
                <div key={`h2-${idx}`} className="group flex items-center gap-3 mt-12 mb-6">
                  <div className="w-1 h-8 bg-emerald-500 rounded-full opacity-70"></div>
-                 <h2 id={id} className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white scroll-mt-24 tracking-tight">{text}</h2>
-                 <button 
-                    onClick={() => scrollToHeading(id)} 
-                    className="opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1 text-emerald-500/50 hover:text-emerald-600 dark:hover:text-emerald-400 p-2"
-                    title="Copy link to section"
-                 >
-                    <LinkIcon size={20} />
-                 </button>
+                 <h2 id={id} className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white group-hover:text-emerald-500 transition-colors">
+                    {text}
+                 </h2>
                </div>
             );
             return;
         }
+
+        // H3
         if (line.startsWith('### ')) {
             flushParagraph();
-            const text = line.replace('### ', '');
-            const id = generateId(text);
             elements.push(
-               <div key={`h3-${idx}`} className="group flex items-center gap-2 mt-8 mb-4">
-                 <h3 id={id} className="text-xl font-bold text-emerald-800 dark:text-emerald-100 scroll-mt-24">{text}</h3>
-                 <button onClick={() => scrollToHeading(id)} className="opacity-0 group-hover:opacity-100 transition-opacity text-emerald-500/40 hover:text-emerald-600 dark:hover:text-emerald-400 p-1"><LinkIcon size={16} /></button>
-               </div>
+                <h3 key={`h3-${idx}`} className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 mt-10 mb-4 flex items-center gap-2">
+                   <span className="text-emerald-500/50">###</span> {line.replace('### ', '')}
+                </h3>
             );
             return;
         }
 
+        // Blockquotes
         if (line.startsWith('> ')) {
-            flushParagraph();
-            elements.push(
-                <div key={`quote-${idx}`} className="relative my-10 pl-8">
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-500 to-transparent rounded-full opacity-50"></div>
-                    <Quote className="absolute -top-4 -left-3 text-emerald-500/20 fill-emerald-500/20" size={32} />
-                    <blockquote className={`text-gray-600 dark:text-gray-400 italic ${currentFontSizeClass} ${currentLineHeightClass} leading-relaxed`}>
-                        {parseInline(line.replace('> ', ''))}
-                    </blockquote>
-                </div>
-            );
-            return;
+             flushParagraph();
+             elements.push(
+                <blockquote key={`quote-${idx}`} className="my-8 p-6 bg-emerald-50 dark:bg-emerald-900/10 border-l-4 border-emerald-500 rounded-r-lg italic text-gray-700 dark:text-gray-300 relative">
+                   <Quote className="absolute top-4 right-4 text-emerald-500/20" size={24} />
+                   {parseInline(line.replace('> ', ''))}
+                </blockquote>
+             );
+             return;
         }
-
-        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+        
+        // List items (basic support)
+        if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
             flushParagraph();
+            const content = line.trim().substring(2);
             elements.push(
-                <li key={`li-${idx}`} className="ml-2 md:ml-6 list-none flex items-start gap-4 mb-3 text-gray-700 dark:text-gray-300 group">
-                    <span className="text-emerald-500 mt-2.5 flex-shrink-0 transition-transform group-hover:scale-125 duration-300">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"></div>
-                    </span>
-                    <span className={`${currentLineHeightClass} ${currentFontSizeClass}`}>{parseInline(trimmed.substring(2))}</span>
+                <li key={`li-${idx}`} className={`ml-6 mb-2 list-disc marker:text-emerald-500 text-gray-700 dark:text-gray-300 ${currentFontSizeClass} pl-2`}>
+                   {parseInline(content)}
                 </li>
             );
             return;
         }
-        
-        if (/^\d+\.\s/.test(trimmed)) {
-             flushParagraph();
-             const match = trimmed.match(/^(\d+)\.\s(.*)/);
-             if (match) {
-                 const [_, num, content] = match;
-                 elements.push(
-                    <div key={`nli-${idx}`} className="ml-2 md:ml-6 flex items-start gap-4 mb-3 text-gray-700 dark:text-gray-300">
-                        <span className="font-mono text-emerald-600 dark:text-emerald-500/80 font-bold mt-1 select-none text-sm bg-emerald-100 dark:bg-emerald-900/20 px-2 py-0.5 rounded border border-emerald-500/20">{num}.</span>
-                        <span className={`${currentLineHeightClass} ${currentFontSizeClass}`}>{parseInline(content)}</span>
-                    </div>
-                 );
-             }
-             return;
-        }
 
-        if (trimmed === '---' || trimmed === '***') {
-            flushParagraph();
-            elements.push(
-                <div key={`hr-${idx}`} className="my-12 flex items-center justify-center gap-4 opacity-30">
-                    <div className="h-px bg-emerald-500 w-full max-w-[100px]"></div>
-                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                    <div className="h-px bg-emerald-500 w-full max-w-[100px]"></div>
-                </div>
-            );
-            return;
-        }
-
+        // Empty lines trigger flush
         if (trimmed === '') {
             flushParagraph();
             return;
         }
 
+        // Accumulate text
         paragraphBuffer.push(line);
     });
 
-    flushParagraph();
-    
-    if (codeBuffer.length > 0) {
-        elements.push(<CodeBlock key="code-end" code={codeBuffer.join('\n')} language={language} />);
-    }
-
+    flushParagraph(); // Final flush
     return elements;
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 relative z-10">
-      <button 
-        onClick={onBack}
-        className="mb-8 flex items-center gap-2 text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors group font-mono text-sm"
-      >
-        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-        <span>{previewMode ? 'Close Preview' : 'cd ..'}</span>
-      </button>
+    <div className="min-h-screen bg-white dark:bg-[#050505] transition-colors duration-300">
+       {/* Progress Bar */}
+       <div className="fixed top-0 left-0 w-full h-1 z-50 bg-gray-200 dark:bg-gray-800">
+          <div className="h-full bg-emerald-500" style={{ width: '0%', transition: 'width 0.1s' }} id="reading-progress"></div>
+       </div>
 
-      {previewMode && (
-         <div className="mb-4 bg-emerald-500/10 border border-emerald-500/30 rounded px-4 py-2 flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm font-mono">
-            <Eye size={16} /> PREVIEW MODE - This content is not yet public.
-         </div>
-      )}
+       {/* Floating Navigation (Desktop) */}
+       <div className="fixed top-24 right-8 z-40 hidden xl:flex flex-col gap-4">
+          <div className="bg-white/90 dark:bg-[#0b0e11]/90 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-lg p-2 shadow-xl space-y-2">
+             <button onClick={() => setFontSize(Math.min(fontSize + 1, 3))} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-600 dark:text-gray-400" title="Aumentar Fonte"><Plus size={16}/></button>
+             <button onClick={() => setFontSize(Math.max(fontSize - 1, 0))} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-600 dark:text-gray-400" title="Diminuir Fonte"><Minus size={16}/></button>
+          </div>
+          <div className="bg-white/90 dark:bg-[#0b0e11]/90 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-lg p-2 shadow-xl">
+             <button onClick={handleLike} className={`p-2 rounded transition-colors ${hasLiked ? 'text-red-500 bg-red-50 dark:bg-red-900/20' : 'text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10'}`}>
+                <Heart size={20} fill={hasLiked ? "currentColor" : "none"} />
+                <span className="text-xs font-mono block text-center mt-1">{likesCount}</span>
+             </button>
+          </div>
+       </div>
 
-      <WindowFrame title={previewMode ? `preview :: ${post.title}` : `posts/${post.id}.md`} className="min-h-[80vh] shadow-2xl">
-        <article className="px-6 md:px-12 py-10 max-w-none">
-          {/* Article Header */}
-          <header className="mb-12 border-b border-gray-200 dark:border-gray-800/60 pb-10">
-            <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
-                <div className="flex gap-2">
-                  <span className="text-emerald-600 dark:text-emerald-400 text-xs font-mono px-3 py-1 border border-emerald-500/30 rounded-full bg-emerald-500/5 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-                    {post.category}
-                  </span>
-                </div>
-                
-                <div className="flex items-center gap-4">
-                  {/* Like Button (Disabled in Preview) */}
-                  <button 
-                    onClick={handleLike}
-                    disabled={previewMode}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${
-                      hasLiked 
-                      ? 'bg-red-500/10 border-red-500/30 text-red-500' 
-                      : 'bg-gray-100 dark:bg-emerald-900/10 border-gray-200 dark:border-emerald-500/20 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400'
-                    } ${previewMode ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    <Heart size={16} className={hasLiked ? 'fill-current' : ''} />
-                    <span className="font-mono text-xs font-bold">{likesCount}</span>
-                  </button>
+       <div className="max-w-3xl mx-auto px-4 py-12 md:py-20">
+          {/* Back Button */}
+          <button 
+            onClick={onBack}
+            className="group mb-8 flex items-center gap-2 text-sm font-mono text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-500 transition-colors"
+          >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            cd ..
+          </button>
 
-                  {/* Font Size Controls */}
-                  <div className="flex items-center gap-1 bg-gray-100 dark:bg-emerald-900/10 rounded-lg p-1 border border-gray-200 dark:border-emerald-500/20">
-                      <button 
-                          onClick={() => setFontSize(Math.max(0, fontSize - 1))}
-                          disabled={fontSize === 0}
-                          className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 disabled:opacity-30 disabled:hover:text-gray-500 transition-colors"
-                          title="Decrease font size"
-                      >
-                          <Minus size={14} />
-                      </button>
-                      <div className="px-2 text-gray-400 dark:text-gray-500">
-                          <Type size={16} />
-                      </div>
-                      <button 
-                          onClick={() => setFontSize(Math.min(fontSizes.length - 1, fontSize + 1))}
-                          disabled={fontSize === fontSizes.length - 1}
-                          className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 disabled:opacity-30 disabled:hover:text-gray-500 transition-colors"
-                          title="Increase font size"
-                      >
-                          <Plus size={14} />
-                      </button>
-                  </div>
-                </div>
-            </div>
+          <WindowFrame className="shadow-2xl dark:shadow-[0_0_100px_rgba(16,185,129,0.1)] mb-12">
+            <div className="bg-white dark:bg-[#0b0e11] min-h-[800px] p-8 md:p-12 relative overflow-hidden">
+               {/* Background Watermark */}
+               <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+                  <Hash size={200} className="text-emerald-500" />
+               </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-8 leading-tight tracking-tight">
-              {post.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500 font-mono border-t border-dashed border-gray-200 dark:border-gray-800 pt-6">
-              <div className="flex items-center gap-2">
-                <Calendar size={14} className="text-emerald-600" />
-                {post.date}
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock size={14} className="text-emerald-600" />
-                {post.readTime}
-              </div>
-              <div className="flex items-center gap-2 ml-auto">
-                 <span className={`w-2 h-2 rounded-full ${previewMode ? 'bg-yellow-500' : 'bg-emerald-500'} animate-pulse`}></span>
-                 {previewMode ? 'Preview' : 'Online'}
-              </div>
-            </div>
-          </header>
-
-          {/* Content Area */}
-          {isLoading ? (
-            <div className="space-y-8 animate-pulse">
-              <div className="h-4 bg-gray-200 dark:bg-gray-800/50 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-800/50 rounded w-full"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-800/50 rounded w-5/6"></div>
-              <div className="h-64 bg-gray-100 dark:bg-gray-900/30 rounded-lg border border-gray-200 dark:border-gray-800 w-full flex flex-col items-center justify-center gap-4 mt-8">
-                 <div className="p-3 bg-emerald-500/10 rounded-full">
-                    <Sparkles className="animate-spin text-emerald-500" size={24} />
-                 </div>
-                 <span className="font-mono text-sm text-gray-500">Generating Neural Content...</span>
-              </div>
-            </div>
-          ) : (
-            <div className="min-h-[300px]">
-               {renderContent(content)}
-            </div>
-          )}
-
-          {/* Article Footer & Navigation */}
-          <footer className="mt-16 pt-10 border-t border-gray-200 dark:border-gray-800/60">
-            <div className="mb-8">
-                <h3 className="text-xs font-mono text-gray-500 mb-3 uppercase tracking-widest">Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                {post.tags.map(tag => (
-                    <span key={tag} className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-500/10 px-3 py-1.5 rounded-full hover:bg-emerald-100 dark:hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all cursor-pointer">
-                    <Hash size={11} />
-                    {tag}
+               {/* Header */}
+               <header className="relative z-10 mb-12 border-b border-gray-100 dark:border-gray-800 pb-12">
+                  <div className="flex flex-wrap gap-3 mb-6">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
+                      <Hash size={12} /> {post.category}
                     </span>
-                ))}
-                </div>
+                    {post.tags?.map(tag => (
+                      <span key={tag} className="inline-flex items-center px-2 py-1 rounded text-[10px] font-mono bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-8 leading-tight">
+                    {post.title}
+                  </h1>
+
+                  <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500 font-mono">
+                     <div className="flex items-center gap-2">
+                        <Calendar size={14} />
+                        {post.date}
+                     </div>
+                     <div className="flex items-center gap-2">
+                        <Clock size={14} />
+                        {post.readTime}
+                     </div>
+                     <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-500">
+                        <Type size={14} />
+                        Markdown
+                     </div>
+                  </div>
+               </header>
+
+               {/* Main Content */}
+               <article className="relative z-10 font-sans">
+                  {isLoading ? (
+                    <div className="space-y-8 animate-pulse">
+                       <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-full"></div>
+                       <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-5/6"></div>
+                       <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-4/6"></div>
+                       <div className="h-32 bg-gray-200 dark:bg-gray-800 rounded-lg mt-8"></div>
+                       <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-full mt-8"></div>
+                       <div className="flex justify-center mt-12">
+                          <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-500 font-mono text-sm">
+                             <Sparkles className="animate-spin" />
+                             Gerando conteúdo via Gemini AI...
+                          </div>
+                       </div>
+                    </div>
+                  ) : (
+                    renderContent(content)
+                  )}
+               </article>
+
+               {/* Footer / Author */}
+               <div className="mt-16 pt-10 border-t border-gray-200 dark:border-gray-800">
+                  <div className="flex items-center justify-between">
+                     <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 p-[2px]">
+                           <div className="w-full h-full rounded-full bg-white dark:bg-[#0b0e11] flex items-center justify-center">
+                              <span className="font-bold text-emerald-600 dark:text-emerald-500">RL</span>
+                           </div>
+                        </div>
+                        <div>
+                           <p className="text-sm font-bold text-gray-900 dark:text-white">Time Runtime::Log</p>
+                           <p className="text-xs text-gray-500 font-mono">Conteúdo Gerado pelo Sistema</p>
+                        </div>
+                     </div>
+                     
+                     <div className="flex gap-2">
+                        <button 
+                           onClick={handleLike}
+                           className={`p-2 rounded-full transition-colors flex items-center gap-2 border ${hasLiked ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400' : 'border-gray-200 dark:border-gray-800 text-gray-500 hover:border-red-500 hover:text-red-500'}`}
+                        >
+                           <Heart size={18} fill={hasLiked ? "currentColor" : "none"} />
+                           <span className="text-xs font-mono font-bold">{likesCount}</span>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+
+               {/* Comments */}
+               <CommentSection postId={post.id} user={user} onAuthRequest={onAuthRequest} />
+
             </div>
-
-            {!previewMode && (previousPost || nextPost) && (
-              <div className="flex flex-col md:flex-row justify-between gap-6 border-t border-gray-200 dark:border-gray-800/50 pt-8 mt-8">
-                {previousPost ? (
-                    <button 
-                      onClick={() => onNavigate && onNavigate(previousPost)} 
-                      className="group flex flex-col items-start gap-2 text-left w-full md:w-1/2 p-4 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-all border border-transparent hover:border-emerald-500/20"
-                    >
-                      <span className="text-xs font-mono text-gray-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 flex items-center gap-2">
-                        <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> 
-                        Previous Post
-                      </span>
-                      <span className="text-gray-900 dark:text-emerald-100 font-semibold group-hover:text-black dark:group-hover:text-white transition-colors line-clamp-2">
-                        {previousPost.title}
-                      </span>
-                    </button>
-                ) : <div className="hidden md:block w-1/2"></div>}
-
-                {nextPost ? (
-                    <button 
-                      onClick={() => onNavigate && onNavigate(nextPost)} 
-                      className="group flex flex-col items-end gap-2 text-right w-full md:w-1/2 p-4 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-all border border-transparent hover:border-emerald-500/20"
-                    >
-                      <span className="text-xs font-mono text-gray-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 flex items-center gap-2">
-                        Next Post 
-                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                      </span>
-                      <span className="text-gray-900 dark:text-emerald-100 font-semibold group-hover:text-black dark:group-hover:text-white transition-colors line-clamp-2">
-                        {nextPost.title}
-                      </span>
-                    </button>
-                ) : <div className="hidden md:block w-1/2"></div>}
-              </div>
-            )}
-          </footer>
+          </WindowFrame>
           
-          {/* Comment Section (Hidden in Preview) */}
-          {!previewMode && (
-             <CommentSection 
-                postId={post.id} 
-                user={user} 
-                onAuthRequest={onAuthRequest} 
-             />
-          )}
-
-        </article>
-      </WindowFrame>
+          {/* Next/Prev Navigation */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             {previousPost ? (
+                <button 
+                  onClick={() => onNavigate && onNavigate(previousPost)}
+                  className="group p-6 text-left bg-white dark:bg-[#0b0e11] border border-gray-200 dark:border-gray-800 rounded-lg hover:border-emerald-500/50 transition-all"
+                >
+                   <span className="text-xs font-mono text-gray-400 group-hover:text-emerald-500 flex items-center gap-1 mb-2">
+                     <ArrowLeft size={12} /> Anterior
+                   </span>
+                   <h4 className="font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors line-clamp-1">
+                     {previousPost.title}
+                   </h4>
+                </button>
+             ) : <div></div>}
+             
+             {nextPost && (
+                <button 
+                  onClick={() => onNavigate && onNavigate(nextPost)}
+                  className="group p-6 text-right bg-white dark:bg-[#0b0e11] border border-gray-200 dark:border-gray-800 rounded-lg hover:border-emerald-500/50 transition-all"
+                >
+                   <span className="text-xs font-mono text-gray-400 group-hover:text-emerald-500 flex items-center gap-1 mb-2 justify-end">
+                     Próximo <ArrowRight size={12} />
+                   </span>
+                   <h4 className="font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors line-clamp-1">
+                     {nextPost.title}
+                   </h4>
+                </button>
+             )}
+          </div>
+       </div>
     </div>
   );
 };

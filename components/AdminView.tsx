@@ -23,7 +23,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
   const [category, setCategory] = useState(CATEGORIES[0].name);
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState('');
-  const [readTime, setReadTime] = useState('5 min read');
+  const [readTime, setReadTime] = useState('5 min leitura');
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
 
   // Edit Mode State
@@ -106,13 +106,13 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
       setContent(data.content || '');
       setCategory(data.category || CATEGORIES[0].name);
       setTags(data.tags || []);
-      setReadTime(data.readTime || '5 min read');
+      setReadTime(data.readTime || '5 min leitura');
       setStatus(data.status || 'draft');
       
       setHasLocalDraft(false); // Hide banner after restore
-      alert("Draft restored from local storage.");
+      alert("Rascunho restaurado do armazenamento local.");
     } catch (e) {
-      console.error("Failed to restore draft", e);
+      console.error("Falha ao restaurar rascunho", e);
     }
   };
 
@@ -142,7 +142,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
       if (error) throw error;
       setPostList(data || []);
     } catch (err) {
-      console.error('Error fetching posts:', err);
+      console.error('Erro ao buscar posts:', err);
     } finally {
       setLoadingList(false);
     }
@@ -174,13 +174,13 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
         setViewMode('edit-form');
       }
     } catch (err) {
-      console.error("Error loading post details:", err);
-      alert("Failed to load post.");
+      console.error("Erro ao carregar detalhes do post:", err);
+      alert("Falha ao carregar post.");
     }
   };
 
   const handleDeletePost = async (postId: string, postTitle: string) => {
-    if (!window.confirm(`Are you sure you want to delete "${postTitle}"? This cannot be undone.`)) {
+    if (!window.confirm(`Tem certeza que deseja excluir "${postTitle}"? Isso não pode ser desfeito.`)) {
       return;
     }
 
@@ -193,8 +193,8 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
       
       fetchPostList(); // Refresh list
     } catch (err) {
-      console.error("Error deleting post:", err);
-      alert("Failed to delete post.");
+      console.error("Erro ao deletar post:", err);
+      alert("Falha ao deletar post.");
     }
   };
 
@@ -205,7 +205,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
     setContent('');
     setCategory(CATEGORIES[0].name);
     setTags([]);
-    setReadTime('5 min read');
+    setReadTime('5 min leitura');
     setStatus('draft');
     setEditingPostId(null);
     setSaveStatus('idle');
@@ -229,10 +229,10 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
       setContent(generated.content);
       setCategory(generated.category || CATEGORIES[0].name);
       setTags(generated.tags || []);
-      setReadTime(generated.read_time || '5 min read');
+      setReadTime(generated.read_time || '5 min leitura');
     } catch (error) {
       console.error(error);
-      alert("Failed to generate content. Check API Key.");
+      alert("Falha ao gerar conteúdo. Verifique sua API Key.");
     } finally {
       setIsGenerating(false);
     }
@@ -277,7 +277,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
 
   const handleSave = async () => {
     if (!title || !slug || !user) {
-      alert("Title, Slug and User Auth required.");
+      alert("Título, Slug e Autenticação de Usuário são obrigatórios.");
       return;
     }
     
@@ -318,7 +318,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
     } catch (error: any) {
       console.error(error);
       setSaveStatus('error');
-      alert(`Error saving: ${error.message}`);
+      alert(`Erro ao salvar: ${error.message}`);
     }
   };
 
@@ -339,12 +339,12 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
   // Preview Object
   const previewPost: BlogPost = {
     id: 'preview',
-    title: title || 'Untitled Post',
-    excerpt: excerpt || 'No excerpt provided...',
+    title: title || 'Post Sem Título',
+    excerpt: excerpt || 'Nenhum resumo fornecido...',
     content: content || '',
     category: category,
     readTime: readTime,
-    date: new Date().toLocaleDateString(),
+    date: new Date().toLocaleDateString('pt-BR'),
     tags: tags,
     slug: slug,
     status: status
@@ -372,7 +372,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
              <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
              <input 
                type="text"
-               placeholder="Search posts..."
+               placeholder="Buscar posts..."
                value={searchTerm}
                onChange={(e) => setSearchTerm(e.target.value)}
                className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors"
@@ -387,17 +387,17 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
            <table className="w-full text-sm text-left">
              <thead className="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-[#15191e] border-b border-gray-200 dark:border-gray-800">
                <tr>
-                 <th className="px-6 py-3 font-mono">Title</th>
+                 <th className="px-6 py-3 font-mono">Título</th>
                  <th className="px-6 py-3 font-mono">Status</th>
-                 <th className="px-6 py-3 font-mono">Date</th>
-                 <th className="px-6 py-3 font-mono text-right">Actions</th>
+                 <th className="px-6 py-3 font-mono">Data</th>
+                 <th className="px-6 py-3 font-mono text-right">Ações</th>
                </tr>
              </thead>
              <tbody>
                {loadingList ? (
                  <tr><td colSpan={4} className="p-6 text-center"><Loader className="animate-spin mx-auto text-emerald-500" /></td></tr>
                ) : filtered.length === 0 ? (
-                 <tr><td colSpan={4} className="p-6 text-center text-gray-500 font-mono">No posts found.</td></tr>
+                 <tr><td colSpan={4} className="p-6 text-center text-gray-500 font-mono">Nenhum post encontrado.</td></tr>
                ) : (
                  filtered.map(post => (
                    <tr key={post.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-[#15191e]/50 transition-colors">
@@ -412,20 +412,20 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                        </span>
                      </td>
                      <td className="px-6 py-4 text-gray-500 font-mono text-xs">
-                       {new Date(post.created_at).toLocaleDateString()}
+                       {new Date(post.created_at).toLocaleDateString('pt-BR')}
                      </td>
                      <td className="px-6 py-4 text-right space-x-2">
                        <button 
                          onClick={() => handleEditSelect(post.id)}
                          className="p-1.5 text-gray-500 hover:text-emerald-500 transition-colors"
-                         title="Edit"
+                         title="Editar"
                        >
                          <Edit size={16} />
                        </button>
                        <button 
                          onClick={() => handleDeletePost(post.id, post.title)}
                          className="p-1.5 text-gray-500 hover:text-red-500 transition-colors"
-                         title="Delete"
+                         title="Excluir"
                        >
                          <Trash2 size={16} />
                        </button>
@@ -449,9 +449,9 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                <History size={16} />
              </div>
              <div>
-               <h4 className="text-xs font-bold text-amber-800 dark:text-amber-500 font-mono uppercase">Unsaved Draft Detected</h4>
+               <h4 className="text-xs font-bold text-amber-800 dark:text-amber-500 font-mono uppercase">Rascunho Não Salvo Detectado</h4>
                <p className="text-sm text-amber-700 dark:text-amber-400/80">
-                 Found a newer local version {viewMode === 'create' ? 'of a new post' : 'of this post'}.
+                 Encontrei uma versão local mais recente {viewMode === 'create' ? 'de um novo post' : 'deste post'}.
                </p>
              </div>
            </div>
@@ -460,14 +460,14 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                onClick={clearLocalDraft}
                className="px-3 py-1.5 text-xs font-mono text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
              >
-               Discard
+               Descartar
              </button>
              <button 
                onClick={handleRestoreDraft}
                className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded text-xs font-mono flex items-center gap-1 transition-colors shadow-sm"
              >
                <RotateCcw size={12} />
-               Restore Draft
+               Restaurar
              </button>
            </div>
          </div>
@@ -478,12 +478,12 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
         <div className="lg:col-span-2 space-y-6">
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-mono text-gray-500 mb-1 uppercase">Title</label>
+              <label className="block text-xs font-mono text-gray-500 mb-1 uppercase">Título</label>
               <input 
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors dark:text-white"
-                placeholder="Ex: Understanding React Fiber"
+                placeholder="Ex: Entendendo React Fiber"
               />
             </div>
             
@@ -498,7 +498,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-mono text-gray-500 mb-1 uppercase">Category</label>
+                <label className="block text-xs font-mono text-gray-500 mb-1 uppercase">Categoria</label>
                 <select 
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
@@ -512,26 +512,26 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-gray-500 mb-1 uppercase">Excerpt</label>
+              <label className="block text-xs font-mono text-gray-500 mb-1 uppercase">Resumo (Excerpt)</label>
               <textarea 
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
                 rows={2}
                 className="w-full bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors dark:text-white"
-                placeholder="Brief summary for cards..."
+                placeholder="Breve resumo para os cartões..."
               />
             </div>
 
             <div className="relative">
               <div className="flex justify-between items-center mb-1">
-                <label className="block text-xs font-mono text-gray-500 uppercase">Content (Markdown)</label>
+                <label className="block text-xs font-mono text-gray-500 uppercase">Conteúdo (Markdown)</label>
                 <button 
                   onClick={() => fileInputRef.current?.click()}
                   className="text-xs flex items-center gap-1 text-emerald-600 hover:text-emerald-500 font-mono"
                   disabled={uploading}
                 >
                   {uploading ? <Loader size={12} className="animate-spin" /> : <UploadCloud size={12} />}
-                  Import .md
+                  Importar .md
                 </button>
                 <input 
                   type="file" 
@@ -541,12 +541,14 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                   onChange={handleFileUpload}
                 />
               </div>
+              {/* IMPROVED STYLING: padding-6, leading-7, tracking-wide */}
               <textarea 
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                rows={15}
-                className="w-full bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors dark:text-white resize-y"
-                placeholder="# Hello World..."
+                rows={25}
+                className="w-full bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-sm font-mono leading-7 tracking-wide focus:outline-none focus:border-emerald-500 transition-colors dark:text-white resize-y shadow-inner"
+                style={{ tabSize: 2 }}
+                placeholder="# Olá Mundo..."
               />
             </div>
           </div>
@@ -558,14 +560,14 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
            <div className="p-4 rounded-lg bg-gradient-to-br from-purple-900/10 to-emerald-900/10 border border-emerald-500/20">
               <div className="flex items-center gap-2 mb-3 text-emerald-600 dark:text-emerald-400 font-mono text-sm font-bold">
                 <Bot size={16} />
-                <span>AI Draft Generator</span>
+                <span>Gerador de Rascunho IA</span>
               </div>
-              <p className="text-xs text-gray-500 mb-3">Generate full article structure using Gemini 3.</p>
+              <p className="text-xs text-gray-500 mb-3">Gere a estrutura completa do artigo usando Gemini 3.</p>
               <div className="flex gap-2">
                  <input 
                    value={aiTopic} 
                    onChange={(e) => setAiTopic(e.target.value)}
-                   placeholder="Topic..." 
+                   placeholder="Tópico..." 
                    className="flex-1 bg-white dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-xs font-mono dark:text-white"
                  />
                  <button 
@@ -593,7 +595,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                 value={currentTag}
                 onChange={(e) => setCurrentTag(e.target.value)}
                 onKeyDown={handleAddTag}
-                placeholder="Add tag + Enter"
+                placeholder="Adicionar tag + Enter"
                 className="w-full bg-transparent border-b border-gray-200 dark:border-gray-700 py-1 text-xs font-mono focus:outline-none focus:border-emerald-500 dark:text-white"
               />
            </div>
@@ -601,7 +603,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
            {/* Meta */}
            <div className="p-4 rounded-lg bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 space-y-4">
               <div>
-                <label className="block text-xs font-mono text-gray-500 mb-1 uppercase">Read Time</label>
+                <label className="block text-xs font-mono text-gray-500 mb-1 uppercase">Tempo de Leitura</label>
                 <input 
                    value={readTime}
                    onChange={(e) => setReadTime(e.target.value)}
@@ -615,8 +617,8 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                   onChange={(e) => setStatus(e.target.value as any)}
                   className="w-full bg-white dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded px-2 py-1.5 text-xs font-mono dark:text-white"
                 >
-                  <option value="draft">Draft</option>
-                  <option value="published">Published</option>
+                  <option value="draft">Rascunho</option>
+                  <option value="published">Publicado</option>
                 </select>
               </div>
            </div>
@@ -626,7 +628,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
               {lastAutosaved && (
                 <div className="text-[10px] text-gray-400 font-mono text-center flex items-center justify-center gap-1">
                    <CheckCircle size={10} className="text-emerald-500" />
-                   Autosaved at {lastAutosaved.toLocaleTimeString()}
+                   Salvo autom. às {lastAutosaved.toLocaleTimeString()}
                 </div>
               )}
 
@@ -634,7 +636,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                 onClick={() => setPreviewMode(true)}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-mono text-xs font-bold"
               >
-                <Eye size={14} /> Preview
+                <Eye size={14} /> Pré-visualizar
               </button>
               <button 
                 onClick={handleSave}
@@ -645,17 +647,17 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                  saveStatus === 'success' ? <CheckCircle size={14} /> :
                  saveStatus === 'error' ? <AlertTriangle size={14} /> :
                  <Save size={14} />}
-                {saveStatus === 'saving' ? 'Saving...' : 
-                 saveStatus === 'success' ? 'Saved!' : 
-                 saveStatus === 'error' ? 'Error' : 
-                 'Save Post'}
+                {saveStatus === 'saving' ? 'Salvando...' : 
+                 saveStatus === 'success' ? 'Salvo!' : 
+                 saveStatus === 'error' ? 'Erro' : 
+                 'Salvar Post'}
               </button>
               {viewMode === 'edit-form' && (
                  <button 
                    onClick={() => setViewMode('edit-list')}
                    className="text-xs text-gray-500 hover:text-gray-400 font-mono text-center underline"
                  >
-                   Cancel Edit
+                   Cancelar Edição
                  </button>
               )}
            </div>
@@ -671,7 +673,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
         <span>/</span>
         <span className="text-emerald-600 dark:text-emerald-500">admin</span>
         <span>/</span>
-        <span>cms_console</span>
+        <span>console_cms</span>
       </div>
 
       <WindowFrame title={viewMode === 'edit-list' ? 'database_explorer.sql' : (viewMode === 'create' ? 'new_post_wizard.exe' : `edit_post_${editingPostId}.sh`)} className="shadow-2xl">
@@ -684,18 +686,18 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                  onClick={handleCreateNew}
                  className={`px-4 py-2 rounded-md text-sm font-mono flex items-center gap-2 transition-all ${viewMode === 'create' ? 'bg-white dark:bg-[#0b0e11] text-emerald-600 dark:text-emerald-500 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                >
-                 <Plus size={16} /> New Post
+                 <Plus size={16} /> Novo Post
                </button>
                <button 
                  onClick={() => setViewMode('edit-list')}
                  className={`px-4 py-2 rounded-md text-sm font-mono flex items-center gap-2 transition-all ${viewMode === 'edit-list' || viewMode === 'edit-form' ? 'bg-white dark:bg-[#0b0e11] text-emerald-600 dark:text-emerald-500 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                >
-                 <PenTool size={16} /> Manage Posts
+                 <PenTool size={16} /> Gerenciar Posts
                </button>
              </div>
 
              <div className="ml-auto text-right hidden md:block">
-               <div className="text-xs font-mono text-gray-400">Authenticated as</div>
+               <div className="text-xs font-mono text-gray-400">Autenticado como</div>
                <div className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 justify-end">
                   <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                   {user.email}

@@ -20,7 +20,7 @@ const Hero: React.FC<HeroProps> = ({ onSubscribe }) => {
             transition={{ duration: 0.5 }}
           >
             <span className="inline-block py-1 px-3 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-mono mb-4">
-              v2.0.4 :: RELEASED
+              v2.0.4 :: LANÇADO
             </span>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 dark:text-white mb-2 font-sans transition-colors duration-300">
               Runtime<span className="text-emerald-600 dark:text-emerald-500">::Log</span>
@@ -38,14 +38,14 @@ const Hero: React.FC<HeroProps> = ({ onSubscribe }) => {
           >
             <button className="px-6 py-3 bg-emerald-500 text-white dark:text-black font-bold rounded hover:bg-emerald-600 dark:hover:bg-emerald-400 transition-colors flex items-center justify-center gap-2 shadow-lg dark:shadow-none">
               <Terminal size={18} />
-              Read Latest
+              Ler Recentes
             </button>
             <button 
               onClick={onSubscribe}
               className="px-6 py-3 border border-emerald-500/50 text-emerald-600 dark:text-emerald-500 rounded hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors flex items-center justify-center gap-2"
             >
               <Code size={18} />
-              Subscribe
+              Assinar
             </button>
           </motion.div>
         </div>
@@ -59,7 +59,7 @@ const Hero: React.FC<HeroProps> = ({ onSubscribe }) => {
              animate={{ x: 40, y: -40, opacity: 0.4 }}
              transition={{ duration: 1, delay: 0.1 }}
           >
-            <WindowFrame title="backend_service.go" className="h-full w-full opacity-50">
+            <WindowFrame title="servico_backend.go" className="h-full w-full opacity-50">
                 <div className="space-y-2 font-mono text-xs text-emerald-700 dark:text-emerald-700">
                   <div className="h-2 w-1/3 bg-emerald-900/10 dark:bg-emerald-900/30 rounded"></div>
                   <div className="h-2 w-2/3 bg-emerald-900/10 dark:bg-emerald-900/30 rounded"></div>
@@ -77,9 +77,9 @@ const Hero: React.FC<HeroProps> = ({ onSubscribe }) => {
           >
             <WindowFrame title="schema.graphql" className="h-full w-full">
                 <div className="space-y-2 font-mono text-xs text-emerald-700 dark:text-emerald-600">
-                  <div className="flex gap-2"><span className="text-pink-600 dark:text-pink-500">type</span> User <span className="text-yellow-600 dark:text-yellow-500">{`{`}</span></div>
+                  <div className="flex gap-2"><span className="text-pink-600 dark:text-pink-500">type</span> Usuario <span className="text-yellow-600 dark:text-yellow-500">{`{`}</span></div>
                   <div className="pl-4 text-emerald-600 dark:text-emerald-500">id: ID!</div>
-                  <div className="pl-4 text-emerald-600 dark:text-emerald-500">username: String!</div>
+                  <div className="pl-4 text-emerald-600 dark:text-emerald-500">nome: String!</div>
                   <div className="text-yellow-600 dark:text-yellow-500">{`}`}</div>
                 </div>
             </WindowFrame>
@@ -111,7 +111,7 @@ const Hero: React.FC<HeroProps> = ({ onSubscribe }) => {
                    
                    <div className="mt-8 p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded border border-emerald-500/20 flex items-center gap-3">
                      <div className="p-1 bg-emerald-500 rounded text-white dark:text-black"><Cpu size={16} /></div>
-                     <span className="text-emerald-700 dark:text-emerald-300 text-xs">Compiling... Done in 400ms</span>
+                     <span className="text-emerald-700 dark:text-emerald-300 text-xs">Compilando... 400ms</span>
                    </div>
                 </div>
              </WindowFrame>

@@ -93,7 +93,7 @@ const App: React.FC = () => {
           excerpt: p.excerpt,
           category: p.category,
           readTime: p.read_time,
-          date: new Date(p.created_at).toLocaleDateString(),
+          date: new Date(p.created_at).toLocaleDateString('pt-BR'),
           content: p.content,
           tags: p.tags,
           slug: p.slug,
@@ -236,8 +236,8 @@ const App: React.FC = () => {
 
         <div className="hidden md:flex items-center gap-6 text-sm font-mono text-gray-600 dark:text-gray-400">
           <button onClick={() => setViewState('HOME')} className={`hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors ${viewState === 'HOME' ? 'text-emerald-600 dark:text-emerald-400 font-medium' : ''}`}>/posts</button>
-          <button onClick={() => setViewState('SUBSCRIBE')} className={`hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors ${viewState === 'SUBSCRIBE' ? 'text-emerald-600 dark:text-emerald-400 font-medium' : ''}`}>/subscribe</button>
-          <button onClick={() => setViewState('ABOUT')} className={`hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors ${viewState === 'ABOUT' ? 'text-emerald-600 dark:text-emerald-400 font-medium' : ''}`}>/about</button>
+          <button onClick={() => setViewState('SUBSCRIBE')} className={`hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors ${viewState === 'SUBSCRIBE' ? 'text-emerald-600 dark:text-emerald-400 font-medium' : ''}`}>/assinar</button>
+          <button onClick={() => setViewState('ABOUT')} className={`hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors ${viewState === 'ABOUT' ? 'text-emerald-600 dark:text-emerald-400 font-medium' : ''}`}>/sobre</button>
           
           {userProfile?.role === 'admin' && (
              <button onClick={() => setViewState('ADMIN')} className={`flex items-center gap-1 hover:text-red-500 transition-colors ${viewState === 'ADMIN' ? 'text-red-500 font-medium' : 'text-gray-500'}`}>
@@ -250,7 +250,7 @@ const App: React.FC = () => {
           <button 
             onClick={toggleTheme} 
             className="text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-white transition-colors p-1"
-            aria-label="Toggle Dark Mode"
+            aria-label="Alternar Tema Escuro"
           >
              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
@@ -266,7 +266,7 @@ const App: React.FC = () => {
                  className="flex items-center gap-2 text-xs font-mono bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300"
                >
                  <LogOut size={14} />
-                 Logout
+                 Sair
                </button>
             </div>
           ) : (
@@ -275,7 +275,7 @@ const App: React.FC = () => {
               className="flex items-center gap-2 text-xs font-mono bg-emerald-600 text-white px-3 py-1.5 rounded hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-900/20"
             >
               <LogIn size={14} />
-              Login
+              Entrar
             </button>
           )}
         </div>
@@ -298,7 +298,7 @@ const App: React.FC = () => {
                       ? 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-500/20' 
                       : 'bg-white dark:bg-[#0b0e11] text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-800 hover:border-emerald-500/50'}`}
                   >
-                    All Systems
+                    Todos os Sistemas
                   </button>
                   {CATEGORIES.map(cat => (
                     <button 
@@ -318,7 +318,7 @@ const App: React.FC = () => {
                      <Search className="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" size={16} />
                      <input 
                        type="text" 
-                       placeholder="grep 'search_query'" 
+                       placeholder="grep 'termo_busca'" 
                        value={searchQuery}
                        onChange={(e) => setSearchQuery(e.target.value)}
                        className="w-full bg-white dark:bg-[#0b0e11] border border-gray-200 dark:border-gray-800 rounded-lg py-2 pl-10 pr-4 text-sm font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 transition-all text-gray-900 dark:text-white"
@@ -330,13 +330,13 @@ const App: React.FC = () => {
               {/* AI Insight Box (Visible only when searching) */}
               {searchQuery.length > 2 && searchInsight && (
                   <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <WindowFrame title="ai_insight.log" className="bg-gradient-to-r from-emerald-500/5 to-transparent border-emerald-500/20">
+                    <WindowFrame title="insight_ia.log" className="bg-gradient-to-r from-emerald-500/5 to-transparent border-emerald-500/20">
                         <div className="p-4 flex gap-4 items-start">
                              <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400">
                                 <Sparkles size={20} />
                              </div>
                              <div>
-                                <h4 className="text-xs font-mono text-emerald-600 dark:text-emerald-500 mb-1 uppercase tracking-wider">Neural Analysis</h4>
+                                <h4 className="text-xs font-mono text-emerald-600 dark:text-emerald-500 mb-1 uppercase tracking-wider">Análise Neural</h4>
                                 <p className="text-sm text-gray-700 dark:text-gray-300 font-mono leading-relaxed">
                                    "{searchInsight}"
                                 </p>
@@ -385,7 +385,7 @@ const App: React.FC = () => {
                              <Cpu size={12} /> {post.readTime}
                           </span>
                           <span className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                            Read <ChevronRight size={16} className="text-emerald-500" />
+                            Ler <ChevronRight size={16} className="text-emerald-500" />
                           </span>
                         </div>
                       </div>
@@ -399,8 +399,8 @@ const App: React.FC = () => {
                   <div className="inline-block p-4 rounded-full bg-gray-100 dark:bg-[#111] text-gray-400 mb-4">
                      <Search size={32} />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No data found</h3>
-                  <p className="text-gray-500 font-mono">Query returned 0 results. Try adjusting search parameters.</p>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Nenhum dado encontrado</h3>
+                  <p className="text-gray-500 font-mono">A consulta retornou 0 resultados. Tente ajustar os parâmetros de busca.</p>
                 </div>
               )}
             </div>
@@ -432,10 +432,10 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
            <div className="flex items-center gap-2 font-mono text-sm text-gray-500">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-              System Status: Operational
+              Status do Sistema: Operacional
            </div>
            <div className="text-gray-500 text-sm font-mono text-center md:text-right">
-              © 2024 Runtime::Log. All processes terminated successfully.
+              © 2024 Runtime::Log. Todos os processos encerrados com sucesso.
            </div>
         </div>
       </footer>

@@ -15,7 +15,7 @@ const AboutView: React.FC = () => {
         <span>whoami</span>
       </div>
 
-      <WindowFrame title="profile_data.json" className="shadow-2xl">
+      <WindowFrame title="dados_perfil.json" className="shadow-2xl">
         <div className="p-8 md:p-12 bg-white dark:bg-[#0b0e11] transition-colors duration-300">
           
           <div className="flex flex-col md:flex-row gap-12">
@@ -30,19 +30,19 @@ const AboutView: React.FC = () => {
               </div>
               
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Runtime User</h2>
-              <p className="text-emerald-600 dark:text-emerald-500 font-mono text-sm mb-6">&lt;FullStackEngineer /&gt;</p>
+              <p className="text-emerald-600 dark:text-emerald-500 font-mono text-sm mb-6">&lt;EngenheiroFullStack /&gt;</p>
               
               <div className="w-full space-y-3 font-mono text-xs">
                  <div className="flex justify-between items-center p-2.5 bg-gray-50 dark:bg-gray-800/30 rounded border border-gray-200 dark:border-gray-800 hover:border-emerald-500/30 transition-colors">
-                    <span className="text-gray-500 flex items-center gap-2"><MapPin size={12}/> Location</span>
+                    <span className="text-gray-500 flex items-center gap-2"><MapPin size={12}/> Localização</span>
                     <span className="text-gray-700 dark:text-gray-300 font-semibold">São Paulo, BR</span>
                  </div>
                  <div className="flex justify-between items-center p-2.5 bg-gray-50 dark:bg-gray-800/30 rounded border border-gray-200 dark:border-gray-800 hover:border-emerald-500/30 transition-colors">
-                    <span className="text-gray-500 flex items-center gap-2"><Briefcase size={12}/> Experience</span>
-                    <span className="text-gray-700 dark:text-gray-300 font-semibold">Senior Level</span>
+                    <span className="text-gray-500 flex items-center gap-2"><Briefcase size={12}/> Experiência</span>
+                    <span className="text-gray-700 dark:text-gray-300 font-semibold">Nível Sênior</span>
                  </div>
                  <div className="flex justify-between items-center p-2.5 bg-gray-50 dark:bg-gray-800/30 rounded border border-gray-200 dark:border-gray-800 hover:border-emerald-500/30 transition-colors">
-                    <span className="text-gray-500 flex items-center gap-2"><Clock size={12}/> Uptime</span>
+                    <span className="text-gray-500 flex items-center gap-2"><Clock size={12}/> Tempo Online</span>
                     <span className="text-gray-700 dark:text-gray-300 font-semibold">99.9%</span>
                  </div>
               </div>
@@ -52,7 +52,7 @@ const AboutView: React.FC = () => {
             <div className="md:w-2/3">
                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                  <Terminal size={20} className="text-emerald-600 dark:text-emerald-500" />
-                 <span>Mission Statement</span>
+                 <span>Missão</span>
                </h3>
                <div className="relative pl-6 border-l-2 border-emerald-500/30 mb-10">
                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-light text-lg">
@@ -65,7 +65,7 @@ const AboutView: React.FC = () => {
 
                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                  <Cpu size={20} className="text-emerald-600 dark:text-emerald-500" />
-                 <span>Tech Stack</span>
+                 <span>Stack Tecnológica</span>
                </h3>
                
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
@@ -94,11 +94,11 @@ const AboutView: React.FC = () => {
                   </a>
                   <a href="#" className="flex items-center gap-2 hover:text-emerald-600 dark:hover:text-emerald-500 transition-colors">
                      <Coffee size={16} />
-                     Buy me a coffee
+                     Pague-me um café
                   </a>
                   <span className="flex items-center gap-2 ml-auto text-gray-400">
                      <Heart size={14} className="text-red-500/80" />
-                     Made with logic
+                     Feito com lógica
                   </span>
                </div>
             </div>

@@ -15,12 +15,13 @@ export const generateArticleContent = async (title: string, excerpt: string): Pr
       Contexto: ${excerpt}
       
       Diretrizes:
-      - Use formato Markdown.
+      - IDIOMA: PORTUGUÊS (BRASIL).
+      - Use formato Markdown válido e bem estruturado.
       - Tom: Educativo, profissional mas levemente informal ("de dev para dev").
+      - Use subtítulos (H2, H3) frequentes para quebrar o texto.
+      - Evite parágrafos muito longos ou blocos densos de texto. O texto deve ser arejado e coeso.
       - Inclua exemplos de código (snippets) onde apropriado (use blocos de código com linguagem especificada).
-      - Use subtítulos (H2, H3) para estruturar.
       - Termine com uma conclusão inspiradora.
-      - Não adicione intro genérica como "Neste artigo...", vá direto ao ponto técnico.
     `;
 
     const response = await ai.models.generateContent({
@@ -41,7 +42,7 @@ export const generateSearchInsights = async (query: string): Promise<string> => 
    try {
      const response = await ai.models.generateContent({
        model: 'gemini-3-flash-preview',
-       contents: `User search query on a dev blog: "${query}". Provide a 1-sentence technical insight or "did you know" related to this query. Keep it geeky.`,
+       contents: `User search query on a dev blog: "${query}". Provide a 1-sentence technical insight or "did you know" related to this query. Keep it geeky. Language: Portuguese (Brazil).`,
      });
      return response.text || "";
    } catch (e) {
@@ -55,7 +56,13 @@ export const generateFullPost = async (topic: string): Promise<any> => {
   const prompt = `
     You are a Senior Staff Engineer writing for a technical blog.
     Generate a complete blog post metadata and content about: "${topic}".
-    The content should be deep, technical, include code snippets, and be formatted in valid Markdown.
+    
+    Content Guidelines:
+    - LANGUAGE: PORTUGUESE (BRAZIL).
+    - The content MUST be deep, technical, and include code snippets.
+    - Format in VALID Markdown.
+    - Structure the content cohesively: Use clear Headings, short paragraphs, and bullet points to avoid large walls of text.
+    - Ensure code blocks are properly fenced.
   `;
 
   try {

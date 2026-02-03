@@ -47,7 +47,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         onClose();
       }
     } catch (err: any) {
-      setError(err.message || 'An error occurred during authentication');
+      setError(err.message || 'Ocorreu um erro durante a autenticação');
     } finally {
       setLoading(false);
     }
@@ -63,14 +63,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           <X size={24} />
         </button>
         
-        <WindowFrame title={isLogin ? "auth_login.exe" : "user_registration.sh"} className="shadow-2xl">
+        <WindowFrame title={isLogin ? "auth_login.exe" : "registro_usuario.sh"} className="shadow-2xl">
           <div className="p-8 bg-white dark:bg-[#0b0e11]">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                {isLogin ? 'Welcome Back' : 'Join the Network'}
+                {isLogin ? 'Bem-vindo de volta' : 'Junte-se à Rede'}
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 font-mono">
-                {isLogin ? 'Enter credentials to access root.' : 'Initialize new user profile.'}
+                {isLogin ? 'Insira as credenciais para acesso root.' : 'Inicializar novo perfil de usuário.'}
               </p>
             </div>
 
@@ -84,7 +84,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             <form onSubmit={handleAuth} className="space-y-4">
               {!isLogin && (
                 <div className="space-y-1">
-                  <label className="text-xs font-mono text-gray-500 uppercase">Username</label>
+                  <label className="text-xs font-mono text-gray-500 uppercase">Usuário</label>
                   <div className="relative">
                     <User className="absolute left-3 top-2.5 text-gray-400" size={16} />
                     <input
@@ -105,7 +105,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   <Mail className="absolute left-3 top-2.5 text-gray-400" size={16} />
                   <input
                     type="email"
-                    placeholder="you@runtime.log"
+                    placeholder="voce@runtime.log"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg py-2 pl-10 pr-4 text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors dark:text-white"
@@ -115,7 +115,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-mono text-gray-500 uppercase">Password</label>
+                <label className="text-xs font-mono text-gray-500 uppercase">Senha</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-2.5 text-gray-400" size={16} />
                   <input
@@ -134,7 +134,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 disabled={loading}
                 className="w-full mt-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-900/20"
               >
-                {loading ? <Loader className="animate-spin" size={16} /> : (isLogin ? 'Login' : 'Create Account')}
+                {loading ? <Loader className="animate-spin" size={16} /> : (isLogin ? 'Entrar' : 'Criar Conta')}
               </button>
             </form>
 
@@ -143,7 +143,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 onClick={() => setIsLogin(!isLogin)}
                 className="text-xs text-gray-500 hover:text-emerald-500 font-mono underline underline-offset-4 transition-colors"
               >
-                {isLogin ? "Don't have an account? mkdir user" : "Already have an account? sudo login"}
+                {isLogin ? "Não tem conta? mkdir user" : "Já tem conta? sudo login"}
               </button>
             </div>
           </div>

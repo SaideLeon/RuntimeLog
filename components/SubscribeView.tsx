@@ -23,7 +23,7 @@ const SubscribeView: React.FC = () => {
             <span>/</span>
             <span className="text-emerald-600 dark:text-emerald-500">etc</span>
             <span>/</span>
-            <span>newsletter_config</span>
+            <span>config_newsletter</span>
         </div>
 
         <WindowFrame title="inscricao.sh" className="min-h-[500px] flex flex-col md:flex-row shadow-2xl">
