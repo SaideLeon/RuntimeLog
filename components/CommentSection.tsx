@@ -88,7 +88,18 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, user, onAuthReq
   const [replyingTo, setReplyingTo] = useState<{ id: string; username: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // Validate UUID to prevent API errors
+  const isValidUUID = (uuid: string) => {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid);
+  };
+
   const fetchComments = async () => {
+    // Safety check for preview mode strings or invalid IDs
+    if (!postId || !isValidUUID(postId)) {
+        setLoading(false);
+        return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('comments')
@@ -130,7 +141,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, user, onAuthReq
   useEffect(() => {
     fetchComments();
     
-    // Simple realtime subscription for refresh
+    // Only subscribe if valid UUID
+    if (!isValidUUID(postId)) return;
+
     const channel = supabase
       .channel('public:comments')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments', filter: `post_id=eq.${postId}` }, () => {
@@ -145,7 +158,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId, user, onAuthReq
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newComment.trim() || !user) return;
+    if (!newComment.trim() || !user || !isValidUUID(postId)) return;
 
     setSubmitting(true);
     try {

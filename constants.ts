@@ -141,4 +141,15 @@ Código limpo não é sobre regras estáticas; é sobre clareza no contexto da e
     slug: 'sindrome-do-impostor',
     status: 'published',
   },
+  {
+    id: '11',
+    title: 'Escalando Django: Otimizações para Alta Performance',
+    excerpt: 'Django é lento? Não se você souber usar. Caching avançado, queries otimizadas com select_related e uso de Celery.',
+    category: 'Arq. Backend',
+    readTime: '11 min leitura',
+    date: '18/11/2023',
+    tags: ['Python', 'Django', 'Backend', 'Performance'],
+    slug: 'escalando-django-performance',
+    status: 'published',
+  },
 ];

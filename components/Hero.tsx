@@ -23,7 +23,7 @@ const Hero: React.FC<HeroProps> = ({ onSubscribe }) => {
               v2.0.4 :: LANÇADO
             </span>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 dark:text-white mb-2 font-sans transition-colors duration-300">
-              Code<span className="text-emerald-600 dark:text-emerald-500">::Omar</span>
+              Code<span className="text-emerald-600 dark:text-emerald-500">Omar</span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-lg mx-auto lg:mx-0 font-light transition-colors duration-300">
               Descodificando a complexidade do software. Um blog para engenheiros que preferem código a reuniões.

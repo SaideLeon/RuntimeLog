@@ -378,6 +378,13 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, user, onAuthRequest, on
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
                       <Hash size={12} /> {post.category}
                     </span>
+                    {/* NEW: Subcategory Badge */}
+                    {post.subcategory && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                          {post.subcategory}
+                        </span>
+                    )}
+
                     {post.tags?.map(tag => (
                       <span key={tag} className="inline-flex items-center px-2 py-1 rounded text-[10px] font-mono bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
                         {tag}
@@ -436,7 +443,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, user, onAuthRequest, on
                            </div>
                         </div>
                         <div>
-                           <p className="text-sm font-bold text-gray-900 dark:text-white">Time Code::Omar</p>
+                           <p className="text-sm font-bold text-gray-900 dark:text-white">Time CodeOmar</p>
                            <p className="text-xs text-gray-500 font-mono">Conteúdo Gerado pelo Sistema</p>
                         </div>
                      </div>
@@ -453,8 +460,10 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, user, onAuthRequest, on
                   </div>
                </div>
 
-               {/* Comments */}
-               <CommentSection postId={post.id} user={user} onAuthRequest={onAuthRequest} />
+               {/* Comments - Hidden in Preview Mode */}
+               {!previewMode && (
+                  <CommentSection postId={post.id} user={user} onAuthRequest={onAuthRequest} />
+               )}
 
             </div>
           </WindowFrame>

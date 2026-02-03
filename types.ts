@@ -3,6 +3,7 @@ export interface BlogPost {
   title: string;
   excerpt: string;
   category: string;
+  subcategory?: string; // Added optional subcategory
   readTime: string; // Mapped from 'read_time' in DB
   date: string;     // Mapped from 'created_at' or 'published_at'
   content?: string; // Markdown content

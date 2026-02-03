@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
 import { generateFullPost } from '../services/geminiService';
 import WindowFrame from './WindowFrame';
-import { UploadCloud, FileText, Loader, X, Bot, PenTool, Save, Trash2, Sparkles, AlertTriangle, Eye, CheckCircle, Edit, RefreshCw, Search, ArrowLeft, Plus, History, RotateCcw } from 'lucide-react';
+import { UploadCloud, FileText, Loader, X, Bot, PenTool, Save, Trash2, Sparkles, AlertTriangle, Eye, CheckCircle, Edit, RefreshCw, Search, ArrowLeft, Plus, History, RotateCcw, Layers } from 'lucide-react';
 import { CATEGORIES } from '../constants';
 import ArticleView from './ArticleView';
 import { BlogPost } from '../types';
@@ -20,7 +20,12 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
   const [slug, setSlug] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
+  
+  // Category & Subcategory State
   const [category, setCategory] = useState(CATEGORIES[0].name);
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
+  const [subcategory, setSubcategory] = useState('');
+  
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState('');
   const [readTime, setReadTime] = useState('5 min leitura');
@@ -80,6 +85,8 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
         excerpt,
         content,
         category,
+        isCustomCategory,
+        subcategory,
         tags,
         readTime,
         status,
@@ -91,7 +98,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [title, slug, excerpt, content, category, tags, readTime, status, viewMode, editingPostId]);
+  }, [title, slug, excerpt, content, category, isCustomCategory, subcategory, tags, readTime, status, viewMode, editingPostId]);
 
   const handleRestoreDraft = () => {
     try {
@@ -104,7 +111,11 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
       setSlug(data.slug || '');
       setExcerpt(data.excerpt || '');
       setContent(data.content || '');
+      
       setCategory(data.category || CATEGORIES[0].name);
+      setIsCustomCategory(data.isCustomCategory || false);
+      setSubcategory(data.subcategory || '');
+
       setTags(data.tags || []);
       setReadTime(data.readTime || '5 min leitura');
       setStatus(data.status || 'draft');
@@ -136,7 +147,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
     try {
       const { data, error } = await supabase
         .from('posts')
-        .select('id, title, status, created_at, category, slug')
+        .select('id, title, status, created_at, category, subcategory, slug')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -167,7 +178,13 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
         setSlug(data.slug);
         setExcerpt(data.excerpt || '');
         setContent(data.content || '');
+        
+        // Handle Category logic (Predefined vs Custom)
+        const isPredefined = CATEGORIES.some(c => c.name === data.category);
         setCategory(data.category);
+        setIsCustomCategory(!isPredefined);
+        setSubcategory(data.subcategory || '');
+        
         setTags(data.tags || []);
         setReadTime(data.read_time);
         setStatus(data.status);
@@ -204,6 +221,8 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
     setExcerpt('');
     setContent('');
     setCategory(CATEGORIES[0].name);
+    setIsCustomCategory(false);
+    setSubcategory('');
     setTags([]);
     setReadTime('5 min leitura');
     setStatus('draft');
@@ -227,7 +246,15 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
       setSlug(generated.slug);
       setExcerpt(generated.excerpt);
       setContent(generated.content);
-      setCategory(generated.category || CATEGORIES[0].name);
+      
+      // Basic category matching, fallback to what was generated
+      const generatedCat = generated.category || CATEGORIES[0].name;
+      const isPredefined = CATEGORIES.some(c => c.name === generatedCat);
+      setCategory(generatedCat);
+      setIsCustomCategory(!isPredefined);
+      // AI usually doesn't generate subcategory in our current prompt, but we can clear it or set if added
+      setSubcategory(''); 
+
       setTags(generated.tags || []);
       setReadTime(generated.read_time || '5 min leitura');
     } catch (error) {
@@ -265,6 +292,9 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
 
         const excerptMatch = yaml.match(/excerpt:\s*(.*)/);
         if (excerptMatch) setExcerpt(excerptMatch[1].trim());
+
+        const subcatMatch = yaml.match(/subcategory:\s*(.*)/);
+        if (subcatMatch) setSubcategory(subcatMatch[1].trim());
       } else {
         // Assume raw markdown
         setContent(text);
@@ -289,6 +319,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
       excerpt,
       content,
       category,
+      subcategory: subcategory || null,
       tags,
       read_time: readTime,
       status,
@@ -343,6 +374,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
     excerpt: excerpt || 'Nenhum resumo fornecido...',
     content: content || '',
     category: category,
+    subcategory: subcategory,
     readTime: readTime,
     date: new Date().toLocaleDateString('pt-BR'),
     tags: tags,
@@ -388,6 +420,7 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
              <thead className="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-[#15191e] border-b border-gray-200 dark:border-gray-800">
                <tr>
                  <th className="px-6 py-3 font-mono">Título</th>
+                 <th className="px-6 py-3 font-mono">Categoria</th>
                  <th className="px-6 py-3 font-mono">Status</th>
                  <th className="px-6 py-3 font-mono">Data</th>
                  <th className="px-6 py-3 font-mono text-right">Ações</th>
@@ -395,13 +428,17 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
              </thead>
              <tbody>
                {loadingList ? (
-                 <tr><td colSpan={4} className="p-6 text-center"><Loader className="animate-spin mx-auto text-emerald-500" /></td></tr>
+                 <tr><td colSpan={5} className="p-6 text-center"><Loader className="animate-spin mx-auto text-emerald-500" /></td></tr>
                ) : filtered.length === 0 ? (
-                 <tr><td colSpan={4} className="p-6 text-center text-gray-500 font-mono">Nenhum post encontrado.</td></tr>
+                 <tr><td colSpan={5} className="p-6 text-center text-gray-500 font-mono">Nenhum post encontrado.</td></tr>
                ) : (
                  filtered.map(post => (
                    <tr key={post.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-[#15191e]/50 transition-colors">
                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-200 truncate max-w-xs">{post.title}</td>
+                     <td className="px-6 py-4 font-mono text-xs text-gray-500">
+                        {post.category} 
+                        {post.subcategory && <span className="text-emerald-600 dark:text-emerald-500"> / {post.subcategory}</span>}
+                     </td>
                      <td className="px-6 py-4">
                        <span className={`px-2 py-1 rounded text-xs font-mono border ${
                          post.status === 'published' 
@@ -497,18 +534,56 @@ const AdminView: React.FC<AdminViewProps> = ({ user }) => {
                   placeholder="ex: react-fiber-deep-dive"
                 />
               </div>
+              
+              {/* Category Selection Area */}
               <div>
-                <label className="block text-xs font-mono text-gray-500 mb-1 uppercase">Categoria</label>
-                <select 
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors dark:text-white"
-                >
-                  {CATEGORIES.map(cat => (
-                    <option key={cat.id} value={cat.name}>{cat.name}</option>
-                  ))}
-                </select>
+                 <div className="flex justify-between items-center mb-1">
+                   <label className="block text-xs font-mono text-gray-500 uppercase">Categoria</label>
+                   <button 
+                      onClick={() => {
+                        setIsCustomCategory(!isCustomCategory);
+                        // Reset to default if switching back to dropdown
+                        if (isCustomCategory) setCategory(CATEGORIES[0].name);
+                        else setCategory('');
+                      }}
+                      className="text-[10px] font-mono text-emerald-600 dark:text-emerald-500 hover:underline cursor-pointer"
+                   >
+                     {isCustomCategory ? "Usar Existente" : "Criar Nova"}
+                   </button>
+                 </div>
+                 
+                 {isCustomCategory ? (
+                   <input 
+                     value={category}
+                     onChange={(e) => setCategory(e.target.value)}
+                     className="w-full bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors dark:text-white"
+                     placeholder="Nome da Nova Categoria"
+                   />
+                 ) : (
+                   <select 
+                     value={category}
+                     onChange={(e) => setCategory(e.target.value)}
+                     className="w-full bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors dark:text-white"
+                   >
+                     {CATEGORIES.map(cat => (
+                       <option key={cat.id} value={cat.name}>{cat.name}</option>
+                     ))}
+                   </select>
+                 )}
               </div>
+            </div>
+
+            {/* Subcategory (New Feature) */}
+            <div>
+              <label className="block text-xs font-mono text-gray-500 mb-1 uppercase flex items-center gap-1">
+                 <Layers size={12} /> Subcategoria (Opcional)
+              </label>
+              <input 
+                value={subcategory}
+                onChange={(e) => setSubcategory(e.target.value)}
+                className="w-full bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors dark:text-white"
+                placeholder="Ex: Database, Hooks, AWS"
+              />
             </div>
 
             <div>

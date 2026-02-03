@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ViewState, BlogPost, UserProfile } from './types';
-import { CATEGORIES } from './constants';
 import GridBackground from './components/GridBackground';
 import Hero from './components/Hero';
 import WindowFrame from './components/WindowFrame';
@@ -10,13 +9,17 @@ import AboutView from './components/AboutView';
 import AdminView from './components/AdminView';
 import AuthModal from './components/AuthModal'; 
 import { supabase } from './services/supabaseClient'; 
-import { Search, Cpu, ChevronRight, Sparkles, Sun, Moon, LogIn, LogOut, ShieldAlert, EyeOff } from 'lucide-react';
+import { Search, Cpu, ChevronRight, Sparkles, Sun, Moon, LogIn, LogOut, ShieldAlert, EyeOff, Layers, Filter } from 'lucide-react';
 import { generateSearchInsights } from './services/geminiService';
 
 const App: React.FC = () => {
   const [viewState, setViewState] = useState<ViewState>('HOME');
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  
+  // Filter States
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [activeSubcategory, setActiveSubcategory] = useState<string>('all');
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [searchInsight, setSearchInsight] = useState('');
   
@@ -92,6 +95,7 @@ const App: React.FC = () => {
           title: p.title,
           excerpt: p.excerpt,
           category: p.category,
+          subcategory: p.subcategory, // Map subcategory
           readTime: p.read_time,
           date: new Date(p.created_at).toLocaleDateString('pt-BR'),
           content: p.content,
@@ -147,6 +151,11 @@ const App: React.FC = () => {
   useEffect(() => {
      fetchPosts();
   }, [userProfile]);
+
+  // Reset subcategory when category changes
+  useEffect(() => {
+    setActiveSubcategory('all');
+  }, [activeCategory]);
 
   const fetchUserProfile = async (userId: string) => {
     try {
@@ -207,10 +216,41 @@ const App: React.FC = () => {
     setViewState('HOME');
   };
 
-  const filteredPosts = posts.filter(post => 
-    (activeCategory === 'all' || post.category === activeCategory) &&
-    (post.title.toLowerCase().includes(searchQuery.toLowerCase()) || post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  // --- Filtering Logic ---
+
+  // 0. Compute Available Categories from database posts
+  const availableCategories = useMemo(() => {
+    const cats = Array.from(new Set(
+      posts.map(p => p.category).filter(c => !!c && c.trim() !== '')
+    ));
+    return cats.sort();
+  }, [posts]);
+
+  // 1. Compute Available Subcategories based on active Category
+  const availableSubcategories = useMemo(() => {
+    const filteredByCat = activeCategory === 'all' 
+      ? posts 
+      : posts.filter(p => p.category === activeCategory);
+      
+    // Extract unique, non-empty subcategories
+    const subs = Array.from(new Set(
+      filteredByCat
+        .map(p => p.subcategory)
+        .filter((sub): sub is string => !!sub && sub.trim() !== '')
+    ));
+    
+    return subs.sort();
+  }, [posts, activeCategory]);
+
+  // 2. Filter posts
+  const filteredPosts = posts.filter(post => {
+    const matchesCategory = activeCategory === 'all' || post.category === activeCategory;
+    const matchesSubcategory = activeSubcategory === 'all' || post.subcategory === activeSubcategory;
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesSubcategory && matchesSearch;
+  });
 
   const currentPostIndex = selectedPost ? posts.findIndex(p => p.id === selectedPost.id) : -1;
   const previousPost = currentPostIndex > 0 ? posts[currentPostIndex - 1] : null;
@@ -231,7 +271,7 @@ const App: React.FC = () => {
           <div className="w-8 h-8 bg-emerald-500 rounded flex items-center justify-center text-black shadow-sm">
             <Cpu size={20} />
           </div>
-          <span>Code<span className="text-emerald-600 dark:text-emerald-500">::Omar</span></span>
+          <span>Code<span className="text-emerald-600 dark:text-emerald-500">Omar</span></span>
         </div>
 
         <div className="hidden md:flex items-center gap-6 text-sm font-mono text-gray-600 dark:text-gray-400">
@@ -289,42 +329,82 @@ const App: React.FC = () => {
             <Hero onSubscribe={() => setViewState('SUBSCRIBE')} />
             
             <div className="max-w-7xl mx-auto px-4 w-full pb-20">
-              {/* Filter Bar */}
-              <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex overflow-x-auto gap-2 pb-2 md:pb-0 scrollbar-hide">
-                  <button 
-                    onClick={() => setActiveCategory('all')}
-                    className={`px-4 py-2 rounded-full text-sm font-mono transition-all whitespace-nowrap border ${activeCategory === 'all' 
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-500/20' 
-                      : 'bg-white dark:bg-[#0b0e11] text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-800 hover:border-emerald-500/50'}`}
-                  >
-                    Todos os Sistemas
-                  </button>
-                  {CATEGORIES.map(cat => (
+              
+              {/* Filter Section */}
+              <div className="mb-12 space-y-4">
+                
+                {/* Top Row: Categories & Search */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  {/* Category Filter */}
+                  <div className="flex overflow-x-auto gap-2 pb-2 md:pb-0 scrollbar-hide">
                     <button 
-                      key={cat.id}
-                      onClick={() => setActiveCategory(cat.name)}
-                      className={`px-4 py-2 rounded-full text-sm font-mono transition-all whitespace-nowrap border ${activeCategory === cat.name 
+                      onClick={() => setActiveCategory('all')}
+                      className={`px-4 py-2 rounded-full text-sm font-mono transition-all whitespace-nowrap border ${activeCategory === 'all' 
                         ? 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-500/20' 
                         : 'bg-white dark:bg-[#0b0e11] text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-800 hover:border-emerald-500/50'}`}
                     >
-                      {cat.name}
+                      Todos os Sistemas
                     </button>
-                  ))}
+                    {availableCategories.map(cat => (
+                      <button 
+                        key={cat}
+                        onClick={() => setActiveCategory(cat)}
+                        className={`px-4 py-2 rounded-full text-sm font-mono transition-all whitespace-nowrap border ${activeCategory === cat
+                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-500/20' 
+                          : 'bg-white dark:bg-[#0b0e11] text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-800 hover:border-emerald-500/50'}`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Search */}
+                  <form onSubmit={handleSearch} className="relative w-full md:w-64 flex-shrink-0">
+                     <div className="relative group">
+                       <Search className="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" size={16} />
+                       <input 
+                         type="text" 
+                         placeholder="grep 'termo_busca'" 
+                         value={searchQuery}
+                         onChange={(e) => setSearchQuery(e.target.value)}
+                         className="w-full bg-white dark:bg-[#0b0e11] border border-gray-200 dark:border-gray-800 rounded-lg py-2 pl-10 pr-4 text-sm font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 transition-all text-gray-900 dark:text-white"
+                       />
+                     </div>
+                  </form>
                 </div>
 
-                <form onSubmit={handleSearch} className="relative w-full md:w-64 flex-shrink-0">
-                   <div className="relative group">
-                     <Search className="absolute left-3 top-2.5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" size={16} />
-                     <input 
-                       type="text" 
-                       placeholder="grep 'termo_busca'" 
-                       value={searchQuery}
-                       onChange={(e) => setSearchQuery(e.target.value)}
-                       className="w-full bg-white dark:bg-[#0b0e11] border border-gray-200 dark:border-gray-800 rounded-lg py-2 pl-10 pr-4 text-sm font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 transition-all text-gray-900 dark:text-white"
-                     />
-                   </div>
-                </form>
+                {/* Bottom Row: Subcategories (Dynamic) */}
+                {availableSubcategories.length > 0 && (
+                  <div className="flex items-center gap-3 animate-in fade-in slide-in-from-top-1">
+                    <div className="flex items-center gap-1.5 text-xs font-mono text-gray-400 uppercase tracking-wider">
+                      <Layers size={12} className="text-emerald-500" />
+                      <span className="hidden sm:inline">Subcategorias:</span>
+                    </div>
+                    <div className="flex overflow-x-auto gap-2 pb-2 md:pb-0 scrollbar-hide flex-1">
+                       <button
+                          onClick={() => setActiveSubcategory('all')}
+                          className={`px-3 py-1 rounded text-xs font-mono transition-all whitespace-nowrap border ${activeSubcategory === 'all'
+                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                            : 'bg-transparent text-gray-500 border-transparent hover:text-emerald-500 hover:bg-emerald-500/5'
+                          }`}
+                       >
+                         Todas
+                       </button>
+                       {availableSubcategories.map(sub => (
+                          <button
+                            key={sub}
+                            onClick={() => setActiveSubcategory(sub)}
+                            className={`px-3 py-1 rounded text-xs font-mono transition-all whitespace-nowrap border ${activeSubcategory === sub
+                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                              : 'bg-transparent text-gray-500 border-transparent hover:text-emerald-500 hover:bg-emerald-500/5'
+                            }`}
+                          >
+                            {sub}
+                          </button>
+                       ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* AI Insight Box (Visible only when searching) */}
@@ -366,9 +446,16 @@ const App: React.FC = () => {
                       
                       <div className="p-6 flex flex-col flex-grow">
                         <div className="flex justify-between items-start mb-4">
-                          <span className="text-xs font-mono text-emerald-600 dark:text-emerald-500 px-2 py-1 bg-emerald-50 dark:bg-emerald-900/10 rounded border border-emerald-500/10">
-                            {post.category}
-                          </span>
+                          <div className="flex items-center gap-2">
+                              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-500 px-2 py-1 bg-emerald-50 dark:bg-emerald-900/10 rounded border border-emerald-500/10">
+                                {post.category}
+                              </span>
+                              {post.subcategory && (
+                                <span className="text-[10px] font-mono text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                  <ChevronRight size={10} /> {post.subcategory}
+                                </span>
+                              )}
+                          </div>
                           <span className="text-xs text-gray-400 font-mono">{post.date}</span>
                         </div>
                         
@@ -397,10 +484,18 @@ const App: React.FC = () => {
               {!loadingPosts && filteredPosts.length === 0 && (
                 <div className="text-center py-20">
                   <div className="inline-block p-4 rounded-full bg-gray-100 dark:bg-[#111] text-gray-400 mb-4">
-                     <Search size={32} />
+                     <Filter size={32} />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Nenhum dado encontrado</h3>
-                  <p className="text-gray-500 font-mono">A consulta retornou 0 resultados. Tente ajustar os parâmetros de busca.</p>
+                  <p className="text-gray-500 font-mono">
+                    Nenhum post corresponde aos filtros de Categoria/Subcategoria selecionados.
+                  </p>
+                  <button 
+                    onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
+                    className="mt-4 text-emerald-600 dark:text-emerald-500 text-sm font-mono underline"
+                  >
+                    Limpar filtros
+                  </button>
                 </div>
               )}
             </div>
@@ -435,7 +530,7 @@ const App: React.FC = () => {
               Status do Sistema: Operacional
            </div>
            <div className="text-gray-500 text-sm font-mono text-center md:text-right">
-              © 2024 Code::Omar. Todos os processos encerrados com sucesso.
+              © 2024 CodeOmar. Todos os processos encerrados com sucesso.
            </div>
         </div>
       </footer>

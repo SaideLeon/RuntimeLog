@@ -29,13 +29,13 @@ const AboutView: React.FC = () => {
                 <div className="absolute bottom-2 right-2 w-8 h-8 bg-emerald-500 border-4 border-white dark:border-[#0b0e11] rounded-full shadow-lg" title="Status: Online"></div>
               </div>
               
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Omar</h2>
-              <p className="text-emerald-600 dark:text-emerald-500 font-mono text-sm mb-6">&lt;EngenheiroFullStack /&gt;</p>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Saíde Omar Saíde</h2>
+              <p className="text-emerald-600 dark:text-emerald-500 font-mono text-sm mb-6">&lt;Dev FullStack /&gt;</p>
               
               <div className="w-full space-y-3 font-mono text-xs">
                  <div className="flex justify-between items-center p-2.5 bg-gray-50 dark:bg-gray-800/30 rounded border border-gray-200 dark:border-gray-800 hover:border-emerald-500/30 transition-colors">
                     <span className="text-gray-500 flex items-center gap-2"><MapPin size={12}/> Localização</span>
-                    <span className="text-gray-700 dark:text-gray-300 font-semibold">São Paulo, BR</span>
+                    <span className="text-gray-700 dark:text-gray-300 font-semibold">Quelimane, MZ</span>
                  </div>
                  <div className="flex justify-between items-center p-2.5 bg-gray-50 dark:bg-gray-800/30 rounded border border-gray-200 dark:border-gray-800 hover:border-emerald-500/30 transition-colors">
                     <span className="text-gray-500 flex items-center gap-2"><Briefcase size={12}/> Experiência</span>
@@ -57,7 +57,7 @@ const AboutView: React.FC = () => {
                <div className="relative pl-6 border-l-2 border-emerald-500/30 mb-10">
                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-light text-lg">
                    Acredito que o desenvolvimento de software é uma forma de arte funcional. Meu objetivo com o 
-                   <span className="font-mono text-emerald-600 dark:text-emerald-500 font-medium mx-1">Code::Omar</span> 
+                   <span className="font-mono text-emerald-600 dark:text-emerald-500 font-medium mx-1">CodeOmar</span> 
                    é desmistificar conceitos complexos de arquitetura, DevOps e engenharia de software, transformando 
                    teoria acadêmica em prática de produção.
                  </p>
@@ -80,7 +80,7 @@ const AboutView: React.FC = () => {
                   <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-800 hover:border-emerald-500/30 transition-colors group">
                      <h4 className="font-mono text-xs text-gray-500 mb-3 uppercase tracking-wider group-hover:text-emerald-500 transition-colors">Backend & Cloud</h4>
                      <div className="flex flex-wrap gap-2">
-                        {['Node.js', 'Go', 'PostgreSQL', 'Redis', 'Docker', 'K8s'].map(t => (
+                        {['Python', 'Django', 'Node.js', 'Go', 'PostgreSQL', 'Redis', 'Docker', 'K8s'].map(t => (
                             <span key={t} className="px-2.5 py-1 text-xs rounded bg-white dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 font-mono border border-gray-200 dark:border-emerald-500/20">{t}</span>
                         ))}
                      </div>
@@ -88,9 +88,9 @@ const AboutView: React.FC = () => {
                </div>
                
                <div className="pt-6 border-t border-gray-200 dark:border-gray-800 flex flex-wrap gap-6 text-sm text-gray-500 font-mono">
-                  <a href="#" className="flex items-center gap-2 hover:text-emerald-600 dark:hover:text-emerald-500 transition-colors">
+                  <a href="https://github.com/SaideLeon" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-emerald-600 dark:hover:text-emerald-500 transition-colors">
                      <Globe size={16} />
-                     github.com/omar
+                     github.com/SaideLeon
                   </a>
                   <a href="#" className="flex items-center gap-2 hover:text-emerald-600 dark:hover:text-emerald-500 transition-colors">
                      <Coffee size={16} />
