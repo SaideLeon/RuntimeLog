@@ -1,7 +1,14 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-// Initialize Gemini
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Initialize Gemini safely inside functions to prevent crash on load if key is missing
+
+const getAiClient = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("API Key not configured");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export const generateArticleContent = async (title: string, excerpt: string): Promise<string> => {
   if (!process.env.API_KEY) {
@@ -9,6 +16,7 @@ export const generateArticleContent = async (title: string, excerpt: string): Pr
   }
 
   try {
+    const ai = getAiClient();
     const model = 'gemini-3-flash-preview';
     const prompt = `
       Escreva um artigo técnico completo de blog para programadores sobre o tema: "${title}".
@@ -37,9 +45,10 @@ export const generateArticleContent = async (title: string, excerpt: string): Pr
 };
 
 export const generateSearchInsights = async (query: string): Promise<string> => {
-   if (!process.env.API_KEY) return "API Key missing.";
+   if (!process.env.API_KEY) return "";
    
    try {
+     const ai = getAiClient();
      const response = await ai.models.generateContent({
        model: 'gemini-3-flash-preview',
        contents: `User search query on a dev blog: "${query}". Provide a 1-sentence technical insight or "did you know" related to this query. Keep it geeky. Language: Portuguese (Brazil).`,
@@ -66,6 +75,7 @@ export const generateFullPost = async (topic: string): Promise<any> => {
   `;
 
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,

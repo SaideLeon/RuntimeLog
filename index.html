@@ -17,6 +17,16 @@
         }
       }
     </script>
+    <script>
+      // Polyfill para process.env para evitar ReferenceError no navegador
+      // IMPORTANTE: Em produção, você deve substituir este valor pela sua chave real
+      // ou injetá-la através do seu servidor/processo de build.
+      window.process = {
+        env: {
+          API_KEY: '' 
+        }
+      };
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
