@@ -1,7 +1,15 @@
-require('dotenv').config();
+const dotenv = require('dotenv');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+
+// Tenta carregar o .env e loga o resultado
+const envConfig = dotenv.config();
+if (envConfig.error) {
+  console.log('ℹ️  Arquivo .env não encontrado, usando variáveis de ambiente do sistema.');
+} else {
+  console.log('📄 Arquivo .env carregado com sucesso.');
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,8 +53,9 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`\n🚀 CodeOmar rodando em http://localhost:${PORT}`);
   if (process.env.API_KEY) {
-    console.log(`✅ API_KEY carregada com sucesso (Length: ${process.env.API_KEY.length})`);
+    console.log(`✅ API_KEY detectada (Length: ${process.env.API_KEY.length})`);
   } else {
-    console.warn(`⚠️  AVISO: API_KEY não encontrada no .env ou variáveis de ambiente.`);
+    console.warn(`⚠️  AVISO CRÍTICO: API_KEY não encontrada. A IA não funcionará.`);
+    console.warn(`   Certifique-se de criar um arquivo .env ou definir a variável no painel do VPS.`);
   }
 });
