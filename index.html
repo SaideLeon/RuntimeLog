@@ -18,13 +18,12 @@
       }
     </script>
     <script>
-      // Polyfill essencial para Runtime de Variáveis de Ambiente no Navegador
-      // Define window.process para que bibliotecas que dependem dele não quebrem
+      // Runtime Environment Injection
+      // Este objeto simula o ambiente para compatibilidade
       window.process = {
         env: {
-          // Em produção (VPS), você pode injetar valores aqui via script de build ou servidor
-          // Exemplo: API_KEY: 'sua-chave-real'
-          API_KEY: '' 
+          // O servidor (server.js) irá substituir este valor vazio pela chave real do .env
+          VITE_API_KEY: '' 
         }
       };
     </script>

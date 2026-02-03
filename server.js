@@ -36,13 +36,14 @@ app.get('*', (req, res) => {
     }
 
     // Obtém a chave do arquivo .env ou das variáveis do sistema
-    const apiKey = process.env.API_KEY || '';
+    // Prioriza VITE_API_KEY (Padrão Vite), fallback para API_KEY antiga
+    const apiKey = process.env.VITE_API_KEY || process.env.API_KEY || '';
     
     // Procura pelo placeholder no index.html e substitui pelo valor real
-    // Regex procura por: API_KEY: '' ou API_KEY: 'valor_antigo'
+    // Regex ajustada para o novo nome da variável no index.html
     const result = data.replace(
-      /API_KEY:\s*['"](.*?)['"]/, 
-      `API_KEY: '${apiKey}'`
+      /VITE_API_KEY:\s*['"](.*?)['"]/, 
+      `VITE_API_KEY: '${apiKey}'`
     );
 
     res.setHeader('Content-Type', 'text/html');
@@ -52,10 +53,10 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`\n🚀 CodeOmar rodando em http://localhost:${PORT}`);
-  if (process.env.API_KEY) {
-    console.log(`✅ API_KEY detectada (Length: ${process.env.API_KEY.length})`);
+  if (process.env.VITE_API_KEY || process.env.API_KEY) {
+    console.log(`✅ VITE_API_KEY detectada.`);
   } else {
-    console.warn(`⚠️  AVISO CRÍTICO: API_KEY não encontrada. A IA não funcionará.`);
-    console.warn(`   Certifique-se de criar um arquivo .env ou definir a variável no painel do VPS.`);
+    console.warn(`⚠️  AVISO CRÍTICO: VITE_API_KEY não encontrada.`);
+    console.warn(`   Certifique-se de definir VITE_API_KEY no arquivo .env`);
   }
 });

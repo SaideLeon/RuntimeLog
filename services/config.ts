@@ -1,26 +1,37 @@
 import env from 'env-var';
 
-// Acessa o objeto global window.process que definimos no index.html
-// Isso garante compatibilidade mesmo que 'process' não seja nativo do navegador
-const getEnvSource = () => {
-  // @ts-ignore - window.process é um polyfill customizado
-  if (typeof window !== 'undefined' && window.process && window.process.env) {
-    // @ts-ignore
-    return window.process.env;
+// Helper robusto para pegar variáveis de ambiente
+// Tenta: 1. import.meta.env (Padrão Vite)
+// Tenta: 2. window.process.env (Nosso Polyfill / Node servers)
+const getEnvValue = (key: string): string => {
+  // 1. Tentar import.meta.env (Vite Standard)
+  try {
+    // @ts-ignore - import.meta pode não existir em todos os contextos de TS
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
+      // @ts-ignore
+      return import.meta.env[key];
+    }
+  } catch (e) {
+    // Ignore access errors
   }
-  // Fallback seguro vazio
-  return {};
+
+  // 2. Tentar window.process.env (Polyfill do server.js)
+  try {
+    // @ts-ignore
+    if (typeof window !== 'undefined' && window.process && window.process.env && window.process.env[key]) {
+       // @ts-ignore
+       return window.process.env[key];
+    }
+  } catch (e) {
+    // Ignore
+  }
+
+  return '';
 };
 
-const envSource = getEnvSource();
-
 export const config = {
-  // Usa env-var para ler de forma segura. 
-  // .asString() retorna undefined se não existir, evitando erros de runtime
-  API_KEY: env.from(envSource).get('API_KEY').asString() || '',
-  
-  // Exemplo de como adicionaríamos outras variáveis no futuro com validação:
-  // PUBLIC_URL: env.from(envSource).get('PUBLIC_URL').default('http://localhost:3000').asString(),
+  // Busca VITE_API_KEY usando a lógica híbrida
+  API_KEY: getEnvValue('VITE_API_KEY'),
 };
 
 export const hasApiKey = (): boolean => {

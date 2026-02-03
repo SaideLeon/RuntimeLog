@@ -24,7 +24,7 @@ npm install
 ```
 
 ### 2. Configuração de Ambiente (.env)
-Este projeto usa um servidor Node.js (`server.js`) para injetar variáveis de ambiente de forma segura.
+Seguindo o padrão **Vite**, as variáveis de ambiente devem começar com `VITE_`.
 
 1. Renomeie o arquivo de exemplo:
    ```bash
@@ -32,10 +32,8 @@ Este projeto usa um servidor Node.js (`server.js`) para injetar variáveis de am
    ```
 2. Abra o arquivo `.env` e adicione sua chave:
    ```env
-   API_KEY=sua_chave_api_google_aqui
+   VITE_API_KEY=sua_chave_api_google_aqui
    ```
-
-> **Nota para VPS:** Se você não puder criar um arquivo `.env` no seu servidor, certifique-se de adicionar `API_KEY` nas Configurações de Variáveis de Ambiente do painel de controle do seu host.
 
 ### 3. Execute a aplicação
 ```bash
@@ -46,8 +44,8 @@ Acesse em `http://localhost:3000`.
 ## 📂 Estrutura
 
 - **Frontend:** React (via ES Modules/esm.sh) no `index.html` e `src/`.
-- **Backend:** `server.js` (Express) serve o frontend e injeta a `API_KEY`.
-- **Config:** `services/config.ts` lê a chave injetada.
+- **Backend:** `server.js` (Express) serve o frontend e injeta a `VITE_API_KEY`.
+- **Config:** `services/config.ts` unifica o acesso via `import.meta.env` e polyfill.
 
 ## 🔐 Licença
 
