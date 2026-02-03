@@ -18,11 +18,12 @@
       }
     </script>
     <script>
-      // Polyfill para process.env para evitar ReferenceError no navegador
-      // IMPORTANTE: Em produção, você deve substituir este valor pela sua chave real
-      // ou injetá-la através do seu servidor/processo de build.
+      // Polyfill essencial para Runtime de Variáveis de Ambiente no Navegador
+      // Define window.process para que bibliotecas que dependem dele não quebrem
       window.process = {
         env: {
+          // Em produção (VPS), você pode injetar valores aqui via script de build ou servidor
+          // Exemplo: API_KEY: 'sua-chave-real'
           API_KEY: '' 
         }
       };
@@ -86,7 +87,8 @@
     "react-syntax-highlighter/": "https://esm.sh/react-syntax-highlighter@^16.1.0/",
     "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.3",
     "date-fns": "https://esm.sh/date-fns@2.30.0",
-    "date-fns/": "https://esm.sh/date-fns@^4.1.0/"
+    "date-fns/": "https://esm.sh/date-fns@^4.1.0/",
+    "env-var": "https://esm.sh/env-var@^7.5.0"
   }
 }
 </script>

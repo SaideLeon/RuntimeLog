@@ -1,9 +1,10 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import { config, hasApiKey } from "./config";
 
 // Initialize Gemini safely inside functions to prevent crash on load if key is missing
 
 const getAiClient = () => {
-  const apiKey = process.env.API_KEY;
+  const apiKey = config.API_KEY;
   if (!apiKey) {
     throw new Error("API Key not configured");
   }
@@ -11,7 +12,7 @@ const getAiClient = () => {
 };
 
 export const generateArticleContent = async (title: string, excerpt: string): Promise<string> => {
-  if (!process.env.API_KEY) {
+  if (!hasApiKey()) {
     return `# Missing API Key\n\nPlease configure your API_KEY to generate content for: ${title}`;
   }
 
@@ -45,7 +46,7 @@ export const generateArticleContent = async (title: string, excerpt: string): Pr
 };
 
 export const generateSearchInsights = async (query: string): Promise<string> => {
-   if (!process.env.API_KEY) return "";
+   if (!hasApiKey()) return "";
    
    try {
      const ai = getAiClient();
@@ -60,7 +61,7 @@ export const generateSearchInsights = async (query: string): Promise<string> => 
 }
 
 export const generateFullPost = async (topic: string): Promise<any> => {
-  if (!process.env.API_KEY) throw new Error("API Key missing");
+  if (!hasApiKey()) throw new Error("API Key missing");
 
   const prompt = `
     You are a Senior Staff Engineer writing for a technical blog.
