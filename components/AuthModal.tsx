@@ -105,7 +105,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   <Mail className="absolute left-3 top-2.5 text-gray-400" size={16} />
                   <input
                     type="email"
-                    placeholder="voce@runtime.log"
+                    placeholder="voce@code.omar"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-gray-50 dark:bg-[#15191e] border border-gray-200 dark:border-gray-700 rounded-lg py-2 pl-10 pr-4 text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors dark:text-white"

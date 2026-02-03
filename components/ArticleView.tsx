@@ -436,7 +436,7 @@ const ArticleView: React.FC<ArticleViewProps> = ({ post, user, onAuthRequest, on
                            </div>
                         </div>
                         <div>
-                           <p className="text-sm font-bold text-gray-900 dark:text-white">Time Runtime::Log</p>
+                           <p className="text-sm font-bold text-gray-900 dark:text-white">Time Code::Omar</p>
                            <p className="text-xs text-gray-500 font-mono">Conteúdo Gerado pelo Sistema</p>
                         </div>
                      </div>

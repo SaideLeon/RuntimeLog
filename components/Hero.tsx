@@ -23,7 +23,7 @@ const Hero: React.FC<HeroProps> = ({ onSubscribe }) => {
               v2.0.4 :: LANÇADO
             </span>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 dark:text-white mb-2 font-sans transition-colors duration-300">
-              Runtime<span className="text-emerald-600 dark:text-emerald-500">::Log</span>
+              Code<span className="text-emerald-600 dark:text-emerald-500">::Omar</span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-lg mx-auto lg:mx-0 font-light transition-colors duration-300">
               Descodificando a complexidade do software. Um blog para engenheiros que preferem código a reuniões.
@@ -104,7 +104,7 @@ const Hero: React.FC<HeroProps> = ({ onSubscribe }) => {
                      <span className="text-purple-600 dark:text-purple-400">return</span> (
                    </div>
                    <div className="pl-8 text-emerald-600 dark:text-emerald-400">
-                     &lt;RuntimeLog /&gt;
+                     &lt;CodeOmar /&gt;
                    </div>
                    <div className="pl-4 text-gray-500 dark:text-gray-400">);</div>
                    <div className="text-yellow-600 dark:text-yellow-400">{`}`}</div>

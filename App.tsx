@@ -231,7 +231,7 @@ const App: React.FC = () => {
           <div className="w-8 h-8 bg-emerald-500 rounded flex items-center justify-center text-black shadow-sm">
             <Cpu size={20} />
           </div>
-          <span>Runtime<span className="text-emerald-600 dark:text-emerald-500">::Log</span></span>
+          <span>Code<span className="text-emerald-600 dark:text-emerald-500">::Omar</span></span>
         </div>
 
         <div className="hidden md:flex items-center gap-6 text-sm font-mono text-gray-600 dark:text-gray-400">
@@ -435,7 +435,7 @@ const App: React.FC = () => {
               Status do Sistema: Operacional
            </div>
            <div className="text-gray-500 text-sm font-mono text-center md:text-right">
-              © 2024 Runtime::Log. Todos os processos encerrados com sucesso.
+              © 2024 Code::Omar. Todos os processos encerrados com sucesso.
            </div>
         </div>
       </footer>

@@ -29,7 +29,7 @@ const AboutView: React.FC = () => {
                 <div className="absolute bottom-2 right-2 w-8 h-8 bg-emerald-500 border-4 border-white dark:border-[#0b0e11] rounded-full shadow-lg" title="Status: Online"></div>
               </div>
               
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Runtime User</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Omar</h2>
               <p className="text-emerald-600 dark:text-emerald-500 font-mono text-sm mb-6">&lt;EngenheiroFullStack /&gt;</p>
               
               <div className="w-full space-y-3 font-mono text-xs">
@@ -57,7 +57,7 @@ const AboutView: React.FC = () => {
                <div className="relative pl-6 border-l-2 border-emerald-500/30 mb-10">
                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-light text-lg">
                    Acredito que o desenvolvimento de software é uma forma de arte funcional. Meu objetivo com o 
-                   <span className="font-mono text-emerald-600 dark:text-emerald-500 font-medium mx-1">Runtime::Log</span> 
+                   <span className="font-mono text-emerald-600 dark:text-emerald-500 font-medium mx-1">Code::Omar</span> 
                    é desmistificar conceitos complexos de arquitetura, DevOps e engenharia de software, transformando 
                    teoria acadêmica em prática de produção.
                  </p>
@@ -90,7 +90,7 @@ const AboutView: React.FC = () => {
                <div className="pt-6 border-t border-gray-200 dark:border-gray-800 flex flex-wrap gap-6 text-sm text-gray-500 font-mono">
                   <a href="#" className="flex items-center gap-2 hover:text-emerald-600 dark:hover:text-emerald-500 transition-colors">
                      <Globe size={16} />
-                     github.com/runtime
+                     github.com/omar
                   </a>
                   <a href="#" className="flex items-center gap-2 hover:text-emerald-600 dark:hover:text-emerald-500 transition-colors">
                      <Coffee size={16} />
